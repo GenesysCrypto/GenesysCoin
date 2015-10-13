@@ -232,6 +232,7 @@ inline std::string StackString(const std::vector<std::vector<unsigned char> >& v
 
 
 
+CScript GetScriptForDestination(const CTxDestination& dest);
 
 
 
@@ -526,6 +527,7 @@ public:
     // pay-to-script-hash transactions:
     unsigned int GetSigOpCount(const CScript& scriptSig) const;
 
+bool IsNormalPaymentScript() const;
     bool IsPayToScriptHash() const;
 
     // Called by CTransaction::IsStandard and P2SH VerifyScript (which makes it consensus-critical).

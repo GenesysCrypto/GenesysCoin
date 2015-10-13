@@ -30,40 +30,40 @@ class CInv;
 class CRequestTracker;
 class CNode;
 
-// class CTxIn;
-// class CTxMemPool;
+class CTxIn;
+class CTxMemPool;
 
-// #define START_MASTERNODE_PAYMENTS_TESTNET 1441285152   // Start on Thu, 3 Sep 2015 @ 12PM	GMT
-// #define START_MASTERNODE_PAYMENTS 1441285152                   // Start on Thu, 3 Sep 2015 @ 12PM	GMT 
+#define START_MASTERNODE_PAYMENTS_TESTNET 1444910400   // Start on Thu, 15 Oct 2015 @ 12PM	GMT
+#define START_MASTERNODE_PAYMENTS 1444910400                   // Start on Thu, 15 Oct 2015 @ 12PM	GMT 
 
-// static const int64_t DARKSEND_COLLATERAL = (10000*COIN);
-// static const int64_t DARKSEND_FEE = (0.0010000*COIN);
-// static const int64_t DARKSEND_POOL_MAX = (10000.99*COIN);
+static const int64_t DARKSEND_COLLATERAL = (2000*COIN);
+static const int64_t DARKSEND_FEE = (0.0020000*COIN);
+static const int64_t DARKSEND_POOL_MAX = (199999.99*COIN);
 
 /*
     At 15 signatures, 1/2 of the masternode network can be owned by
     one party without comprimising the security of InstantX
     (1000/2150.0)**15 = 1.031e-05
 */
-// #define INSTANTX_SIGNATURES_REQUIRED           20
-// #define INSTANTX_SIGNATURES_TOTAL              30
+#define INSTANTX_SIGNATURES_REQUIRED           20
+#define INSTANTX_SIGNATURES_TOTAL              30
 
-// #define MASTERNODE_NOT_PROCESSED               0 // initial state
-// #define MASTERNODE_IS_CAPABLE                  1
-// #define MASTERNODE_NOT_CAPABLE                 2
-// #define MASTERNODE_STOPPED                     3
-// #define MASTERNODE_INPUT_TOO_NEW               4
-// #define MASTERNODE_PORT_NOT_OPEN               6
-// #define MASTERNODE_PORT_OPEN                   7
-// #define MASTERNODE_SYNC_IN_PROCESS             8
-// #define MASTERNODE_REMOTELY_ENABLED            9
+#define MASTERNODE_NOT_PROCESSED               0 // initial state
+#define MASTERNODE_IS_CAPABLE                  1
+#define MASTERNODE_NOT_CAPABLE                 2
+#define MASTERNODE_STOPPED                     3
+#define MASTERNODE_INPUT_TOO_NEW               4
+#define MASTERNODE_PORT_NOT_OPEN               6
+#define MASTERNODE_PORT_OPEN                   7
+#define MASTERNODE_SYNC_IN_PROCESS             8
+#define MASTERNODE_REMOTELY_ENABLED            9
 
-// #define MASTERNODE_MIN_CONFIRMATIONS           15
-// #define MASTERNODE_MIN_DSEEP_SECONDS           (30*60)
-// #define MASTERNODE_MIN_DSEE_SECONDS            (5*60)
-// #define MASTERNODE_PING_SECONDS                (1*60)
-// #define MASTERNODE_EXPIRATION_SECONDS          (65*60)
-// #define MASTERNODE_REMOVAL_SECONDS             (70*60)
+#define MASTERNODE_MIN_CONFIRMATIONS           15
+#define MASTERNODE_MIN_DSEEP_SECONDS           (30*60)
+#define MASTERNODE_MIN_DSEE_SECONDS            (5*60)
+#define MASTERNODE_PING_SECONDS                (1*60)
+#define MASTERNODE_EXPIRATION_SECONDS          (65*60)
+#define MASTERNODE_REMOVAL_SECONDS             (70*60)
 
 // // //
 
@@ -167,10 +167,13 @@ const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfSta
 void StakeMiner(CWallet *pwallet);
 void ResendWalletTransactions(bool fForce = false);
 
+int64_t GetMasternodePayment(int nHeight, int64_t blockValue);
+bool AcceptableInputs(CTxMemPool& pool, const CTransaction &txo, bool fLimitFree,
+bool* pfMissingInputs);
+int GetInputAge(CTxIn& vin);
 
 
-
-
+bool AbortNode(const std::string &msg, const std::string &userMessage="");
 
 
 
@@ -297,6 +300,7 @@ class CTxIn
 public:
     COutPoint prevout;
     CScript scriptSig;
+	CScript prevPubKey;  ////
     unsigned int nSequence;
 
     CTxIn()
@@ -798,6 +802,8 @@ public:
     int GetBlocksToMaturity() const;
     bool AcceptToMemoryPool(CTxDB& txdb, bool fCheckInputs=true);
     bool AcceptToMemoryPool();
+	int GetTransactionLockSignatures() const;
+    bool IsTransactionLockTimedOut() const;
 };
 
 
@@ -888,6 +894,8 @@ public:
 
     // GenesysCoin: block signature - signed by one of the coin base txout[N]'s owner
     std::vector<unsigned char> vchBlockSig;
+	
+	mutable CScript payee;      /////// mn
 
     // memory only
     mutable std::vector<uint256> vMerkleTree;
@@ -1624,6 +1632,7 @@ public:
     bool removeConflicts(const CTransaction &tx);
     void clear();
     void queryHashes(std::vector<uint256>& vtxid);
+	bool lookup(uint256 hash, CTransaction& result) const;   ////  mn
 
     unsigned long size()
     {

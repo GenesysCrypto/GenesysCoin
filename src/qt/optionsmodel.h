@@ -32,6 +32,8 @@ public:
         DetachDatabases,   // bool
         Language,          // QString
         CoinControlFeatures, // bool
+DarksendRounds, // int
+ anonymizeGenesysCoinAmount, //int
         OptionIDRowCount,
     };
 
@@ -64,6 +66,8 @@ signals:
     void transactionFeeChanged(qint64);
     void reserveBalanceChanged(qint64);
     void coinControlFeaturesChanged(bool);
+void darksendRoundsChanged(int);
+ void anonymizeGenesysCoinAmountChanged(int);
 };
 
 #endif // OPTIONSMODEL_H

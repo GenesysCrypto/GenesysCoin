@@ -7,6 +7,10 @@
 
 #include "wallet.h"
 
+namespace boost {
+ class thread_group;
+} // namespace boost
+
 extern CWallet* pwalletMain;
 void StartShutdown();
 void Shutdown(void* parg);

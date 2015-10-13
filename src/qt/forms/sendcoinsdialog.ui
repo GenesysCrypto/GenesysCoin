@@ -660,6 +660,46 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
+	 
+	 <widget class="QCheckBox" name="checkUseDarksend">
+       <property name="minimumSize">
+        <size>
+         <width>95</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: rgb(255, 255, 255);background:transparent;</string>
+       </property>
+       <property name="text">
+        <string>Darksend</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkInstantX">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>85</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: rgb(255, 255, 255);background:transparent;</string>
+       </property>
+       <property name="text">
+        <string>InstantX</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+	 
       <widget class="QPushButton" name="addButton">
        <property name="toolTip">
         <string>Send to multiple recipients at once</string>

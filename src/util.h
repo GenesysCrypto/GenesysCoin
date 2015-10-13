@@ -26,6 +26,12 @@
 
 #include <openssl/sha.h>
 #include <openssl/ripemd.h>
+#include <openssl/bio.h>
+#include <openssl/evp.h>
+#include <openssl/buffer.h>
+#include <openssl/crypto.h> // for OPENSSL_cleanse()
+#include <openssl/rand.h>
+#include <openssl/bn.h>
 
 #include "netbase.h" // for AddTimeData
 
@@ -37,6 +43,8 @@
 
 static const int64_t COIN = 100000000;
 static const int64_t CENT = 1000000;
+
+typedef int64_t CAmount;
 
 #define BEGIN(a)            ((char*)&(a))
 #define END(a)              ((char*)&((&(a))[1]))
@@ -96,6 +104,9 @@ T* alignup(T* p)
     return u.ptr;
 }
 
+
+boost::filesystem::path GetMasternodeConfigFile();
+
 #ifdef WIN32
 #define MSG_NOSIGNAL        0
 #define MSG_DONTWAIT        0
@@ -129,7 +140,20 @@ inline void MilliSleep(int64_t n)
 
 
 
+//Dark features
 
+extern bool fMasterNode;
+extern bool fLiteMode;
+extern int nInstantXDepth;
+extern int nDarksendRounds;
+extern int nAnonymizeGenesysCoinAmount;
+extern int nLiquidityProvider;
+extern bool fEnableDarksend;
+extern int64_t enforceMasternodePaymentsTime;
+extern std::string strMasterNodeAddr;
+extern int keysLoaded;
+extern bool fSucessfullyLoaded;
+extern std::vector<int64_t> darkSendDenominations;
 
 
 
@@ -190,6 +214,8 @@ bool ParseMoney(const char* pszIn, int64_t& nRet);
 std::vector<unsigned char> ParseHex(const char* psz);
 std::vector<unsigned char> ParseHex(const std::string& str);
 bool IsHex(const std::string& str);
+SecureString DecodeBase64Secure(const SecureString& input);
+SecureString EncodeBase64Secure(const SecureString& input);
 std::vector<unsigned char> DecodeBase64(const char* p, bool* pfInvalid = NULL);
 std::string DecodeBase64(const std::string& str);
 std::string EncodeBase64(const unsigned char* pch, size_t len);
@@ -227,7 +253,7 @@ std::string FormatSubVersion(const std::string& name, int nClientVersion, const 
 void AddTimeData(const CNetAddr& ip, int64_t nTime);
 void runCommand(std::string strCommand);
 
-
+void GetRandBytes(unsigned char* buf, int num);
 
 
 
