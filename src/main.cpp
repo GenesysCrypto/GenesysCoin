@@ -1300,10 +1300,10 @@ int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
     {
         nSubsidy = 0.5 * COIN;  // ~26000 from block 100000 (~60days Staking)
     }
-		// Fork to permanent block rewards halving to 0.219
+		// Fork to permanent block rewards halving to 0.205
 		else if(pindexBest->nHeight > 152000)
     {
-        nSubsidy = 0.219 * COIN;  // 0.219 Coins/Stake: 75% (0.16425 Coins) for Skynodes and 25% (0.05475 Coins) for Wallet Clients
+        nSubsidy = 0.205 * COIN;  // 0.205 Coins/Stake: 75% (0.15675 Coins) for Skynodes and 25% (0.05225 Coins) for Wallet Clients
     } 
     
     if (fDebug && GetBoolArg("-printcreation"))
