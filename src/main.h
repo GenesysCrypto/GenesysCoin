@@ -36,7 +36,7 @@ class CTxMemPool;
 #define START_MASTERNODE_PAYMENTS_TESTNET 1444910400   // Start on Thu, 15 Oct 2015 @ 12PM	GMT
 #define START_MASTERNODE_PAYMENTS 1444910400                   // Start on Thu, 15 Oct 2015 @ 12PM	GMT 
 
-static const int64_t DARKSEND_COLLATERAL = (2000*COIN);
+static const int64_t DARKSEND_COLLATERAL = (2000*COIN);    // 2000MNs
 static const int64_t DARKSEND_FEE = (0.0020000*COIN);
 static const int64_t DARKSEND_POOL_MAX = (199999.99*COIN);
 
@@ -62,8 +62,8 @@ static const int64_t DARKSEND_POOL_MAX = (199999.99*COIN);
 #define MASTERNODE_MIN_DSEEP_SECONDS           (30*60)
 #define MASTERNODE_MIN_DSEE_SECONDS            (5*60)
 #define MASTERNODE_PING_SECONDS                (1*60)
-#define MASTERNODE_EXPIRATION_SECONDS          (65*60)
-#define MASTERNODE_REMOVAL_SECONDS             (70*60)
+#define MASTERNODE_EXPIRATION_SECONDS          (14465*60) // Old 65*60
+#define MASTERNODE_REMOVAL_SECONDS             (14470*60) // Old 70*60
 
 // // //
 
@@ -74,7 +74,7 @@ static const unsigned int MAX_BLOCK_SIZE_GEN = MAX_BLOCK_SIZE/2;
 static const unsigned int MAX_BLOCK_SIGOPS = MAX_BLOCK_SIZE/50;
 static const unsigned int MAX_ORPHAN_TRANSACTIONS = MAX_BLOCK_SIZE/100;
 static const unsigned int MAX_INV_SZ = 50000;
-static const int64_t MIN_TX_FEE = 1000;
+static const int64_t MIN_TX_FEE = 20000; // will be changed to 0.00002000 GSY at a certain value of the coin
 static const int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
 static const int64_t MAX_MONEY = 22000000 * COIN; // 
 static const int64_t COIN_YEAR_REWARD = 5 * CENT; // 5% per year (REGULAR POS - 0.5 Coins/Stake)

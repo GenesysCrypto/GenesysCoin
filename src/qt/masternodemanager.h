@@ -32,7 +32,7 @@ public:
 
 public slots:
     void updateNodeList();
-    void updateAdrenalineNode(QString alias, QString addr, QString privkey, QString collateral);
+    void updateSkyNode(QString alias, QString addr, QString privkey, QString collateral);
 
 signals:
 

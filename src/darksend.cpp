@@ -2165,7 +2165,7 @@ void ThreadCheckDarkSendPool(void* parg)
         }
 
         //try to sync the masternode list and payment list every 5 seconds from at least 3 nodes
-        if(c % (5*5) == 0 && RequestedMasterNodeList < 3){
+        if(c % (5*5) == 0 && RequestedMasterNodeList < 5){     // Old ....< 3){
             bool fIsInitialDownload = IsInitialBlockDownload();
             if(!fIsInitialDownload) {
                 LOCK(cs_vNodes);

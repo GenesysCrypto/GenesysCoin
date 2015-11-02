@@ -23,7 +23,7 @@ enum DBErrors
     DB_NEED_REWRITE
 };
 
-class CAdrenalineNodeConfig
+class CSkyNodeConfig
 {
 public:
  int nVersion;
@@ -32,7 +32,7 @@ public:
  std::string sCollateralAddress;
  std::string sMasternodePrivKey;
 
- CAdrenalineNodeConfig()
+ CSkyNodeConfig()
  {
  nVersion = 0;
  }
@@ -105,9 +105,9 @@ public:
         return Erase(std::make_pair(std::string("tx"), hash));
     }
 
-bool WriteAdrenalineNodeConfig(std::string sAlias, const CAdrenalineNodeConfig& nodeConfig);
- bool ReadAdrenalineNodeConfig(std::string sAlias, CAdrenalineNodeConfig& nodeConfig);
- bool EraseAdrenalineNodeConfig(std::string sAlias);
+bool WriteSkyNodeConfig(std::string sAlias, const CSkyNodeConfig& nodeConfig);
+ bool ReadSkyNodeConfig(std::string sAlias, CSkyNodeConfig& nodeConfig);
+ bool EraseSkyNodeConfig(std::string sAlias);
 
     bool WriteKey(const CPubKey& vchPubKey, const CPrivKey& vchPrivKey, const CKeyMetadata &keyMeta)
     {

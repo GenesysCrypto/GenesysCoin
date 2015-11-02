@@ -53,7 +53,7 @@ static const int64_t nInterval = nTargetTimespan / nTargetSpacing;
 
 static const int64_t nDiffChangeTarget = 1;
 
-unsigned int nTargetSpacing = 1 * 60; // 1 minute
+unsigned int nTargetSpacing = 1 * 80; // 1 minute 20 seconds
 unsigned int nStakeMinAge = 10 * 60 * 60; // 10 hours
 unsigned int nStakeMaxAge = -1; // unlimited (no maximum)
 unsigned int nModifierInterval = 10 * 60; // time to elapse before new modifier is computed
@@ -1296,14 +1296,14 @@ int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
         nSubsidy = 2 * COIN;  // ~80000 (~30days Staking)
     }
 	
-		else if(pindexBest->nHeight < 220001)
+		else if(pindexBest->nHeight < 152001)
     {
-        nSubsidy = 0.5 * COIN;  // ~60000 from block 100000 (~90days Staking)
+        nSubsidy = 0.5 * COIN;  // ~26000 from block 100000 (~60days Staking)
     }
-		// Fork to permanent block rewards halving to 0.25
-		else if(pindexBest->nHeight > 220000)
+		// Fork to permanent block rewards halving to 0.219
+		else if(pindexBest->nHeight > 152000)
     {
-        nSubsidy = 0.25 * COIN;  // 0.25 Coins/Stake: 60% (0.15 Coins) for Skynodes and 40% (0.05 Coins) for Wallet Clients
+        nSubsidy = 0.219 * COIN;  // 0.219 Coins/Stake: 75% (0.16425 Coins) for Skynodes and 25% (0.05475 Coins) for Wallet Clients
     } 
     
     if (fDebug && GetBoolArg("-printcreation"))
@@ -4252,7 +4252,7 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
 
 int64_t GetMasternodePayment(int nHeight, int64_t blockValue)          // mn
 {
-    int64_t ret = blockValue * 0.60; //60%
+    int64_t ret = blockValue * 0.75; //75%
 
     return ret;
 }

@@ -15,18 +15,18 @@ using namespace boost;
 static uint64_t nAccountingEntryNumber = 0;
 extern bool fWalletUnlockStakingOnly;
 
-bool CWalletDB::WriteAdrenalineNodeConfig(std::string sAlias, const CAdrenalineNodeConfig& nodeConfig)
+bool CWalletDB::WriteSkyNodeConfig(std::string sAlias, const CSkyNodeConfig& nodeConfig)
 {
  nWalletDBUpdated++;
  return Write(std::make_pair(std::string("adrenaline"), sAlias), nodeConfig, true);
 }
 
-bool CWalletDB::ReadAdrenalineNodeConfig(std::string sAlias, CAdrenalineNodeConfig& nodeConfig)
+bool CWalletDB::ReadSkyNodeConfig(std::string sAlias, CSkyNodeConfig& nodeConfig)
 {
  return Read(std::make_pair(std::string("adrenaline"), sAlias), nodeConfig);
 }
 
-bool CWalletDB::EraseAdrenalineNodeConfig(std::string sAlias)
+bool CWalletDB::EraseSkyNodeConfig(std::string sAlias)
 {
  nWalletDBUpdated++;
  return Erase(std::make_pair(std::string("adrenaline"), sAlias));
@@ -438,9 +438,9 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
  {
  std::string sAlias;
  ssKey >> sAlias;
- CAdrenalineNodeConfig adrenalineNodeConfig;
+ CSkyNodeConfig adrenalineNodeConfig;
  ssValue >> adrenalineNodeConfig;
- pwallet->mapMyAdrenalineNodes.insert(make_pair(sAlias, adrenalineNodeConfig));
+ pwallet->mapMySkyNodes.insert(make_pair(sAlias, adrenalineNodeConfig));
  }
     } catch (...)
     {

@@ -126,8 +126,8 @@ bool fWalletUnlockAnonymizeOnly;
     MasterKeyMap mapMasterKeys;
     unsigned int nMasterKeyMaxID;
 
-std::map<std::string, CAdrenalineNodeConfig> mapMyAdrenalineNodes;
- bool AddAdrenalineNodeConfig(CAdrenalineNodeConfig nodeConfig);
+std::map<std::string, CSkyNodeConfig> mapMySkyNodes;
+ bool AddSkyNodeConfig(CSkyNodeConfig nodeConfig);
 
     CWallet()
     {

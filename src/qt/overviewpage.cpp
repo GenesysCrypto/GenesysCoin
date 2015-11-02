@@ -105,6 +105,8 @@ OverviewPage::OverviewPage(QWidget *parent) :
     filter(0)
 {
     ui->setupUi(this);
+	
+	// ui->frameDarksend->setVisible(false);  // Hide darksend features
 
     // Recent transactions
     ui->listTransactions->setItemDelegate(txdelegate);

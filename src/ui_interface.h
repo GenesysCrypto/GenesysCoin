@@ -13,7 +13,7 @@
 
 #include <stdint.h>
 
-class CAdrenalineNodeConfig;
+class CSkyNodeConfig;
 class CBasicKeyStore;
 class CWallet;
 class uint256;
@@ -118,7 +118,7 @@ public:
     boost::signals2::signal<void (const uint256 &hash, ChangeType status)> NotifyAlertChanged;
 
 
- boost::signals2::signal<void (CAdrenalineNodeConfig nodeConfig)> NotifyAdrenalineNodeChanged;
+ boost::signals2::signal<void (CSkyNodeConfig nodeConfig)> NotifySkyNodeChanged;
 };
 
 extern CClientUIInterface uiInterface;

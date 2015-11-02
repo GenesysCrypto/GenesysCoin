@@ -1,7 +1,7 @@
 # GenesysCoin (The Multiplayer Gaming Currency) - Standard Wallet
 TEMPLATE = app
 TARGET = GenesysCoin-qt
-VERSION = 1.2.0.0
+VERSION = 1.3.0.0
 INCLUDEPATH += src src/json src/qt
 DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
 CONFIG += no_include_pwd
@@ -256,8 +256,8 @@ HEADERS += src/qt/bitcoingui.h \
     src/instantx.h \
     src/activemasternode.h \
     src/spork.h \
-    src/qt/addeditadrenalinenode.h \
-    src/qt/adrenalinenodeconfigdialog.h \
+    src/qt/addeditskynode.h \
+    src/qt/skynodeconfigdialog.h \
     src/qt/masternodemanager.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
@@ -346,8 +346,8 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/activemasternode.cpp \
     src/spork.cpp \
     src/masternodeconfig.cpp \
-    src/qt/addeditadrenalinenode.cpp \
-    src/qt/adrenalinenodeconfigdialog.cpp \
+    src/qt/addeditskynode.cpp \
+    src/qt/skynodeconfigdialog.cpp \
     src/qt/masternodemanager.cpp
 
 RESOURCES += \
@@ -367,8 +367,8 @@ FORMS += \
     src/qt/forms/rpcconsole.ui \
     src/qt/forms/optionsdialog.ui \
     src/qt/forms/darksendconfig.ui \
-    src/qt/forms/addeditadrenalinenode.ui \
-    src/qt/forms/adrenalinenodeconfigdialog.ui \
+    src/qt/forms/addeditskynode.ui \
+    src/qt/forms/skynodeconfigdialog.ui \
     src/qt/forms/masternodemanager.ui
 
 contains(USE_QRCODE, 1) {
