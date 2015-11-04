@@ -18,18 +18,18 @@ extern bool fWalletUnlockStakingOnly;
 bool CWalletDB::WriteSkyNodeConfig(std::string sAlias, const CSkyNodeConfig& nodeConfig)
 {
  nWalletDBUpdated++;
- return Write(std::make_pair(std::string("adrenaline"), sAlias), nodeConfig, true);
+ return Write(std::make_pair(std::string("skynode"), sAlias), nodeConfig, true);
 }
 
 bool CWalletDB::ReadSkyNodeConfig(std::string sAlias, CSkyNodeConfig& nodeConfig)
 {
- return Read(std::make_pair(std::string("adrenaline"), sAlias), nodeConfig);
+ return Read(std::make_pair(std::string("skynode"), sAlias), nodeConfig);
 }
 
 bool CWalletDB::EraseSkyNodeConfig(std::string sAlias)
 {
  nWalletDBUpdated++;
- return Erase(std::make_pair(std::string("adrenaline"), sAlias));
+ return Erase(std::make_pair(std::string("skynode"), sAlias));
 }
 
 //
@@ -434,13 +434,13 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
         {
             ssValue >> pwallet->nOrderPosNext;
         }
- else if (strType == "adrenaline")
+ else if (strType == "skynode")
  {
  std::string sAlias;
  ssKey >> sAlias;
- CSkyNodeConfig adrenalineNodeConfig;
- ssValue >> adrenalineNodeConfig;
- pwallet->mapMySkyNodes.insert(make_pair(sAlias, adrenalineNodeConfig));
+ CSkyNodeConfig skynodeNodeConfig;
+ ssValue >> skynodeNodeConfig;
+ pwallet->mapMySkyNodes.insert(make_pair(sAlias, skynodeNodeConfig));
  }
     } catch (...)
     {

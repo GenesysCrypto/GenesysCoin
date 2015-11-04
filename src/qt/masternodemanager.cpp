@@ -99,7 +99,7 @@ void MasternodeManager::on_tableWidget_2_itemSelectionChanged()
 
 void MasternodeManager::updateSkyNode(QString alias, QString addr, QString privkey, QString collateral)
 {
-    LOCK(cs_adrenaline);
+    LOCK(cs_skynode);
     bool bFound = false;
     int nodeRow = 0;
     for(int i=0; i < ui->tableWidget_2->rowCount(); i++)
@@ -183,10 +183,10 @@ void MasternodeManager::updateNodeList()
 
     if(pwalletMain)
     {
-        LOCK(cs_adrenaline);
-        BOOST_FOREACH(PAIRTYPE(std::string, CSkyNodeConfig) adrenaline, pwalletMain->mapMySkyNodes)
+        LOCK(cs_skynode);
+        BOOST_FOREACH(PAIRTYPE(std::string, CSkyNodeConfig) skynode, pwalletMain->mapMySkyNodes)
         {
-            updateSkyNode(QString::fromStdString(adrenaline.second.sAlias), QString::fromStdString(adrenaline.second.sAddress), QString::fromStdString(adrenaline.second.sMasternodePrivKey), QString::fromStdString(adrenaline.second.sCollateralAddress));
+            updateSkyNode(QString::fromStdString(skynode.second.sAlias), QString::fromStdString(skynode.second.sAddress), QString::fromStdString(skynode.second.sMasternodePrivKey), QString::fromStdString(skynode.second.sCollateralAddress));
         }
     }
 }
@@ -268,7 +268,7 @@ void MasternodeManager::on_removeButton_clicked()
         return;
 
     QMessageBox::StandardButton confirm;
-    confirm = QMessageBox::question(this, "Delete SkyNode?", "Are you sure you want to delete this adrenaline node configuration?", QMessageBox::Yes|QMessageBox::No);
+    confirm = QMessageBox::question(this, "Delete SkyNode?", "Are you sure you want to delete this SkyNode configuration?", QMessageBox::Yes|QMessageBox::No);
 
     if(confirm == QMessageBox::Yes)
     {
@@ -281,9 +281,9 @@ void MasternodeManager::on_removeButton_clicked()
         walletdb.EraseSkyNodeConfig(c.sAddress);
         ui->tableWidget_2->clearContents();
         ui->tableWidget_2->setRowCount(0);
-        BOOST_FOREACH(PAIRTYPE(std::string, CSkyNodeConfig) adrenaline, pwalletMain->mapMySkyNodes)
+        BOOST_FOREACH(PAIRTYPE(std::string, CSkyNodeConfig) skynode, pwalletMain->mapMySkyNodes)
         {
-            updateSkyNode(QString::fromStdString(adrenaline.second.sAlias), QString::fromStdString(adrenaline.second.sAddress), QString::fromStdString(adrenaline.second.sMasternodePrivKey), QString::fromStdString(adrenaline.second.sCollateralAddress));
+            updateSkyNode(QString::fromStdString(skynode.second.sAlias), QString::fromStdString(skynode.second.sAddress), QString::fromStdString(skynode.second.sMasternodePrivKey), QString::fromStdString(skynode.second.sCollateralAddress));
         }
     }
 }
@@ -343,9 +343,9 @@ void MasternodeManager::on_stopButton_clicked()
 void MasternodeManager::on_startAllButton_clicked()
 {
     std::string results;
-    BOOST_FOREACH(PAIRTYPE(std::string, CSkyNodeConfig) adrenaline, pwalletMain->mapMySkyNodes)
+    BOOST_FOREACH(PAIRTYPE(std::string, CSkyNodeConfig) skynode, pwalletMain->mapMySkyNodes)
     {
-        CSkyNodeConfig c = adrenaline.second;
+        CSkyNodeConfig c = skynode.second;
 	std::string errorMessage;
         bool result = activeMasternode.RegisterByPubKey(c.sAddress, c.sMasternodePrivKey, c.sCollateralAddress, errorMessage);
 	if(result)
@@ -366,9 +366,9 @@ void MasternodeManager::on_startAllButton_clicked()
 void MasternodeManager::on_stopAllButton_clicked()
 {
     std::string results;
-    BOOST_FOREACH(PAIRTYPE(std::string, CSkyNodeConfig) adrenaline, pwalletMain->mapMySkyNodes)
+    BOOST_FOREACH(PAIRTYPE(std::string, CSkyNodeConfig) skynode, pwalletMain->mapMySkyNodes)
     {
-        CSkyNodeConfig c = adrenaline.second;
+        CSkyNodeConfig c = skynode.second;
 	std::string errorMessage;
         bool result = activeMasternode.StopMasterNode(c.sAddress, c.sMasternodePrivKey, errorMessage);
 	if(result)

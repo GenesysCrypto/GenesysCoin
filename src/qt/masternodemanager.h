@@ -41,7 +41,7 @@ private:
     Ui::MasternodeManager *ui;
     ClientModel *clientModel;
     WalletModel *walletModel;
-    CCriticalSection cs_adrenaline;
+    CCriticalSection cs_skynode;
     void subscribeToCoreSignals();
     void unsubscribeFromCoreSignals();
 
