@@ -53,7 +53,7 @@ static const int64_t nInterval = nTargetTimespan / nTargetSpacing;
 
 static const int64_t nDiffChangeTarget = 1;
 
-unsigned int nTargetSpacing = 1 * 60; // 1 minute
+unsigned int nTargetSpacing = 1 * 60; // 1 minute        DO NOT TOUCH
 unsigned int nStakeMinAge = 10 * 60 * 60; // 10 hours
 unsigned int nStakeMaxAge = -1; // unlimited (no maximum)
 unsigned int nModifierInterval = 10 * 60; // time to elapse before new modifier is computed
@@ -1235,7 +1235,6 @@ int64_t GetProofOfWorkReward(int64_t nFees)
     {
         nSubsidy = 25 * COIN;  // ~50000
     }
-	
         else
     {
         nSubsidy = 0 * COIN;
@@ -1290,22 +1289,25 @@ int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
     {
         nSubsidy = 50 * COIN;  // ~50000
     }
- 	
 		else if(pindexBest->nHeight < 52001)
     {
         nSubsidy = 2 * COIN;  // ~80000 (~30days Staking)
     }
-	
 		else if(pindexBest->nHeight < 152001)
     {
         nSubsidy = 0.5 * COIN;  // ~60000 from block 100000 (~90days Staking)
-    }
-		// Fork to permanent block rewards halving to 0.25
-		else if(pindexBest->nHeight > 152000)
+    }	
+		else if(pindexBest->nHeight < 352001)
     {
-        nSubsidy = 0.25 * COIN;  // 0.25 Coins/Stake: 60% (0.15 Coins) for Skynodes and 40% (0.1 Coins) for Wallet Clients
-    } 
+        nSubsidy = 0.25 * COIN;  // ~50000 (~180days Staking)
+    }
     
+	// Fork to permanent block rewards halving to 0.175
+		else if(pindexBest->nHeight > 352000)
+    {
+        nSubsidy = 0.175 * COIN;  // 0.175 Coins/Stake: 70% (0.1225 Coins) for Skynodes and 30% (0.0525 Coins) for Wallet Clients
+    }
+	
     if (fDebug && GetBoolArg("-printcreation"))
         printf("GetProofOfStakeReward(): create=%s nCoinAge=%"PRId64"\n", FormatMoney(nSubsidy).c_str(), nCoinAge);
 
@@ -4252,7 +4254,7 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
 
 int64_t GetMasternodePayment(int nHeight, int64_t blockValue)          // mn
 {
-    int64_t ret = blockValue * 0.60; //60%
+    int64_t ret = blockValue * 0.70; //70%
 
     return ret;
 }

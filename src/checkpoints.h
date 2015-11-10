@@ -8,7 +8,7 @@
 #include "net.h"
 #include "util.h"
 
-#define CHECKPOINT_MAX_SPAN (60 * 60 * 2) // max 2 hours before latest block
+#define CHECKPOINT_MAX_SPAN (60 * 60 * 1) // max 1 hour before latest block
 
 #ifdef WIN32 
 #undef STRICT 
