@@ -6,19 +6,17 @@ GENESYS | SKYNODES (Masternodes) Ready
 
 ---------------------------------- CHANGE LOG ---------------------------------------
 
-GSY 1.3.5 (Major Update)			-November 2015
+GSY 1.3.8 (Experimental)			-November 2015
 
 *Genesys Core
 
--Permanent Block Rewards now 0.175 - Halving at [Block 352000]
--Skynode Payment increased from 60% to 70%
--Masternode list Sync increased to at least 8 nodes
--New Core Protocol 82075
--Min Protocol Version 82072
--New Masternode and InstantX Protocol 80075
--Old Wallets under Protocol 82072 Banned from Genesys Network
--Checkpoint Max Span changed from 2hrs to 1hr
--New Checkpoints Hardcoded
+-Block Rewards Halving at [Block 152000]
+-Masternode list Sync increased to at least 12 nodes
+-New Core Protocol 82080
+-Min Protocol Version 82078
+-New Masternode and InstantX Protocol 80078
+-All Old Wallets under Protocol 82078 Completely Banned from Genesys Network
+-Smal Updates in the Source Code
 
 *Genesys Gaming
 
