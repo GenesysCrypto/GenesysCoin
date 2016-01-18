@@ -2,13 +2,19 @@
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#include "net.h"
-#include "bitcoinrpc.h"
+#include "rpcserver.h"
+
 #include "alert.h"
-#include "wallet.h"
-#include "db.h"
-#include "walletdb.h"
-#include "spork.h"
+#include "main.h"
+#include "net.h"
+#include "netbase.h"
+#include "protocol.h"
+#include "sync.h"
+#include "timedata.h"
+#include "util.h"
+
+#include <boost/foreach.hpp>
+#include "json/json_spirit_value.h"
 
 using namespace json_spirit;
 using namespace std;
@@ -22,6 +28,24 @@ Value getconnectioncount(const Array& params, bool fHelp)
 
     LOCK(cs_vNodes);
     return (int)vNodes.size();
+}
+
+Value ping(const Array& params, bool fHelp)
+{
+    if (fHelp || params.size() != 0)
+        throw runtime_error(
+            "ping\n"
+            "Requests that a ping be sent to all other nodes, to measure ping time.\n"
+            "Results provided in getpeerinfo, pingtime and pingwait fields are decimal seconds.\n"
+            "Ping command is handled in queue with all other commands, so it measures processing backlog, not just network ping.");
+
+    // Request that each node send a ping during next message processing pass
+    LOCK(cs_vNodes);
+    BOOST_FOREACH(CNode* pNode, vNodes) {
+        pNode->fPingQueued = true;
+    }
+
+    return Value::null;
 }
 
 static void CopyNodeStats(std::vector<CNodeStats>& vstats)
@@ -53,23 +77,165 @@ Value getpeerinfo(const Array& params, bool fHelp)
         Object obj;
 
         obj.push_back(Pair("addr", stats.addrName));
-        obj.push_back(Pair("services", strprintf("%08"PRIx64, stats.nServices)));
+        if (!(stats.addrLocal.empty()))
+            obj.push_back(Pair("addrlocal", stats.addrLocal));
+        obj.push_back(Pair("services", strprintf("%08x", stats.nServices)));
         obj.push_back(Pair("lastsend", (int64_t)stats.nLastSend));
         obj.push_back(Pair("lastrecv", (int64_t)stats.nLastRecv));
+        obj.push_back(Pair("bytessent", (int64_t)stats.nSendBytes));
+        obj.push_back(Pair("bytesrecv", (int64_t)stats.nRecvBytes));
         obj.push_back(Pair("conntime", (int64_t)stats.nTimeConnected));
+        obj.push_back(Pair("pingtime", stats.dPingTime));
+        if (stats.dPingWait > 0.0)
+            obj.push_back(Pair("pingwait", stats.dPingWait));
         obj.push_back(Pair("version", stats.nVersion));
         obj.push_back(Pair("subver", stats.strSubVer));
         obj.push_back(Pair("inbound", stats.fInbound));
         obj.push_back(Pair("startingheight", stats.nStartingHeight));
         obj.push_back(Pair("banscore", stats.nMisbehavior));
+        obj.push_back(Pair("syncnode", stats.fSyncNode));
 
         ret.push_back(obj);
     }
 
     return ret;
 }
- 
-// GenesysCoin: send alert.  
+
+Value addnode(const Array& params, bool fHelp)
+{
+    string strCommand;
+    if (params.size() == 2)
+        strCommand = params[1].get_str();
+    if (fHelp || params.size() != 2 ||
+        (strCommand != "onetry" && strCommand != "add" && strCommand != "remove"))
+        throw runtime_error(
+            "addnode <node> <add|remove|onetry>\n"
+            "Attempts add or remove <node> from the addnode list or try a connection to <node> once.");
+
+    string strNode = params[0].get_str();
+
+    if (strCommand == "onetry")
+    {
+        CAddress addr;
+        ConnectNode(addr, strNode.c_str());
+        return Value::null;
+    }
+
+    LOCK(cs_vAddedNodes);
+    vector<string>::iterator it = vAddedNodes.begin();
+    for(; it != vAddedNodes.end(); it++)
+        if (strNode == *it)
+            break;
+
+    if (strCommand == "add")
+    {
+        if (it != vAddedNodes.end())
+            throw JSONRPCError(RPC_CLIENT_NODE_ALREADY_ADDED, "Error: Node already added");
+        vAddedNodes.push_back(strNode);
+    }
+    else if(strCommand == "remove")
+    {
+        if (it == vAddedNodes.end())
+            throw JSONRPCError(RPC_CLIENT_NODE_NOT_ADDED, "Error: Node has not been added.");
+        vAddedNodes.erase(it);
+    }
+
+    return Value::null;
+}
+
+Value getaddednodeinfo(const Array& params, bool fHelp)
+{
+    if (fHelp || params.size() < 1 || params.size() > 2)
+        throw runtime_error(
+            "getaddednodeinfo <dns> [node]\n"
+            "Returns information about the given added node, or all added nodes\n"
+            "(note that onetry addnodes are not listed here)\n"
+            "If dns is false, only a list of added nodes will be provided,\n"
+            "otherwise connected information will also be available.");
+
+    bool fDns = params[0].get_bool();
+
+    list<string> laddedNodes(0);
+    if (params.size() == 1)
+    {
+        LOCK(cs_vAddedNodes);
+        BOOST_FOREACH(string& strAddNode, vAddedNodes)
+            laddedNodes.push_back(strAddNode);
+    }
+    else
+    {
+        string strNode = params[1].get_str();
+        LOCK(cs_vAddedNodes);
+        BOOST_FOREACH(string& strAddNode, vAddedNodes)
+            if (strAddNode == strNode)
+            {
+                laddedNodes.push_back(strAddNode);
+                break;
+            }
+        if (laddedNodes.size() == 0)
+            throw JSONRPCError(RPC_CLIENT_NODE_NOT_ADDED, "Error: Node has not been added.");
+    }
+
+    if (!fDns)
+    {
+        Object ret;
+        BOOST_FOREACH(string& strAddNode, laddedNodes)
+            ret.push_back(Pair("addednode", strAddNode));
+        return ret;
+    }
+
+    Array ret;
+
+    list<pair<string, vector<CService> > > laddedAddreses(0);
+    BOOST_FOREACH(string& strAddNode, laddedNodes)
+    {
+        vector<CService> vservNode(0);
+        if(Lookup(strAddNode.c_str(), vservNode, Params().GetDefaultPort(), fNameLookup, 0))
+            laddedAddreses.push_back(make_pair(strAddNode, vservNode));
+        else
+        {
+            Object obj;
+            obj.push_back(Pair("addednode", strAddNode));
+            obj.push_back(Pair("connected", false));
+            Array addresses;
+            obj.push_back(Pair("addresses", addresses));
+        }
+    }
+
+    LOCK(cs_vNodes);
+    for (list<pair<string, vector<CService> > >::iterator it = laddedAddreses.begin(); it != laddedAddreses.end(); it++)
+    {
+        Object obj;
+        obj.push_back(Pair("addednode", it->first));
+
+        Array addresses;
+        bool fConnected = false;
+        BOOST_FOREACH(CService& addrNode, it->second)
+        {
+            bool fFound = false;
+            Object node;
+            node.push_back(Pair("address", addrNode.ToString()));
+            BOOST_FOREACH(CNode* pnode, vNodes)
+                if (pnode->addr == addrNode)
+                {
+                    fFound = true;
+                    fConnected = true;
+                    node.push_back(Pair("connected", pnode->fInbound ? "inbound" : "outbound"));
+                    break;
+                }
+            if (!fFound)
+                node.push_back(Pair("connected", "false"));
+            addresses.push_back(node);
+        }
+        obj.push_back(Pair("connected", fConnected));
+        obj.push_back(Pair("addresses", addresses));
+        ret.push_back(obj);
+    }
+
+    return ret;
+}
+
+// ppcoin: send alert.  
 // There is a known deadlock situation with ThreadMessageHandler
 // ThreadMessageHandler: holds cs_vSend and acquiring cs_main in SendMessages()
 // ThreadRPCServer: holds cs_main and acquiring cs_vSend in alert.RelayTo()/PushMessage()/BeginMessage()
@@ -106,7 +272,7 @@ Value sendalert(const Array& params, bool fHelp)
     alert.vchMsg = vector<unsigned char>(sMsg.begin(), sMsg.end());
 
     vector<unsigned char> vchPrivKey = ParseHex(params[1].get_str());
-    key.SetPrivKey(CPrivKey(vchPrivKey.begin(), vchPrivKey.end())); // if key is not correct openssl may crash
+    key.SetPrivKey(CPrivKey(vchPrivKey.begin(), vchPrivKey.end()), false); // if key is not correct openssl may crash
     if (!key.Sign(Hash(alert.vchMsg.begin(), alert.vchMsg.end()), alert.vchSig))
         throw runtime_error(
             "Unable to sign alert, check private key?\n");  
@@ -132,41 +298,17 @@ Value sendalert(const Array& params, bool fHelp)
     return result;
 }
 
-/*
-+    Used for updating/reading spork settings on the network
-+*/
-Value spork(const Array& params, bool fHelp)
+Value getnettotals(const Array& params, bool fHelp)
 {
-    if(params.size() == 1 && params[0].get_str() == "show"){
-        std::map<int, CSporkMessage>::iterator it = mapSporksActive.begin();
+    if (fHelp || params.size() > 0)
+        throw runtime_error(
+            "getnettotals\n"
+            "Returns information about network traffic, including bytes in, bytes out,\n"
+            "and current time.");
 
-        Object ret;
-        while(it != mapSporksActive.end()) {
-            ret.push_back(Pair(sporkManager.GetSporkNameByID(it->second.nSporkID), it->second.nValue));
-            it++;
-        }
-        return ret;
-    } else if (params.size() == 2){
-        int nSporkID = sporkManager.GetSporkIDByName(params[0].get_str());
-        if(nSporkID == -1){
-            return "Invalid spork name";
-        }
-
-        // SPORK VALUE
-        int64_t nValue = params[1].get_int();
-
-        //broadcast new spork
-        if(sporkManager.UpdateSpork(nSporkID, nValue)){
-            return "success";
-        } else {
-            return "failure";
-        }
-
-    }
-
-    throw runtime_error(
-        "spork <name> [<value>]\n"
-        "<name> is the corresponding spork name, or 'show' to show all current spork settings"
-        "<value> is a epoch datetime to enable or disable spork"
-        + HelpRequiringPassphrase());
+    Object obj;
+    obj.push_back(Pair("totalbytesrecv", CNode::GetTotalBytesRecv()));
+    obj.push_back(Pair("totalbytessent", CNode::GetTotalBytesSent()));
+    obj.push_back(Pair("timemillis", GetTimeMillis()));
+    return obj;
 }

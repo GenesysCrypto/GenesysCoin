@@ -8,6 +8,7 @@
 #include "walletmodel.h"
 #include "activemasternode.h"
 #include "masternodeconfig.h"
+#include "masternodeman.h"
 #include "masternode.h"
 #include "walletdb.h"
 #include "wallet.h"
@@ -18,6 +19,7 @@
 #include <QTimer>
 #include <QDebug>
 #include <QScrollArea>
+#include <QScroller>
 #include <QDateTime>
 #include <QApplication>
 #include <QClipboard>
@@ -37,8 +39,8 @@ MasternodeManager::MasternodeManager(QWidget *parent) :
     ui->stopButton->setEnabled(false);
     ui->copyAddressButton->setEnabled(false);
 
-    ui->tableWidget->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    ui->tableWidget_2->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui->tableWidget_2->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     subscribeToCoreSignals();
 
@@ -151,32 +153,33 @@ void MasternodeManager::updateNodeList()
     ui->countLabel->setText("Updating...");
     ui->tableWidget->clearContents();
     ui->tableWidget->setRowCount(0);
-    BOOST_FOREACH(CMasterNode mn, vecMasternodes) 
+    std::vector<CMasternode> vMasternodes = mnodeman.GetFullMasternodeVector();
+    BOOST_FOREACH(CMasternode& mn, vMasternodes)
     {
         int mnRow = 0;
         ui->tableWidget->insertRow(0);
 
- 	// populate list
-	// Address, Rank, Active, Active Seconds, Last Seen, Pub Key
-	QTableWidgetItem *activeItem = new QTableWidgetItem(QString::number(mn.IsEnabled()));
-	QTableWidgetItem *addressItem = new QTableWidgetItem(QString::fromStdString(mn.addr.ToString()));
-	QTableWidgetItem *rankItem = new QTableWidgetItem(QString::number(GetMasternodeRank(mn.vin, pindexBest->nHeight)));
-	QTableWidgetItem *activeSecondsItem = new QTableWidgetItem(seconds_to_DHMS((qint64)(mn.lastTimeSeen - mn.now)));
-	QTableWidgetItem *lastSeenItem = new QTableWidgetItem(QString::fromStdString(DateTimeStrFormat(mn.lastTimeSeen)));
+        // populate list
+        // Address, Rank, Active, Active Seconds, Last Seen, Pub Key
+        QTableWidgetItem *activeItem = new QTableWidgetItem(QString::number(mn.IsEnabled()));
+        QTableWidgetItem *addressItem = new QTableWidgetItem(QString::fromStdString(mn.addr.ToString()));
+        QTableWidgetItem *rankItem = new QTableWidgetItem(QString::number(mnodeman.GetMasternodeRank(mn.vin, pindexBest->nHeight)));
+        QTableWidgetItem *activeSecondsItem = new QTableWidgetItem(seconds_to_DHMS((qint64)(mn.lastTimeSeen - mn.sigTime)));
+        QTableWidgetItem *lastSeenItem = new QTableWidgetItem(QString::fromStdString(DateTimeStrFormat(mn.lastTimeSeen)));
 	
-	CScript pubkey;
+        CScript pubkey;
         pubkey =GetScriptForDestination(mn.pubkey.GetID());
         CTxDestination address1;
         ExtractDestination(pubkey, address1);
         CBitcoinAddress address2(address1);
-	QTableWidgetItem *pubkeyItem = new QTableWidgetItem(QString::fromStdString(address2.ToString()));
+        QTableWidgetItem *pubkeyItem = new QTableWidgetItem(QString::fromStdString(address2.ToString()));
 	
-	ui->tableWidget->setItem(mnRow, 0, addressItem);
-	ui->tableWidget->setItem(mnRow, 1, rankItem);
-	ui->tableWidget->setItem(mnRow, 2, activeItem);
-	ui->tableWidget->setItem(mnRow, 3, activeSecondsItem);
-	ui->tableWidget->setItem(mnRow, 4, lastSeenItem);
-	ui->tableWidget->setItem(mnRow, 5, pubkeyItem);
+        ui->tableWidget->setItem(mnRow, 0, addressItem);
+        ui->tableWidget->setItem(mnRow, 1, rankItem);
+        ui->tableWidget->setItem(mnRow, 2, activeItem);
+        ui->tableWidget->setItem(mnRow, 3, activeSecondsItem);
+        ui->tableWidget->setItem(mnRow, 4, lastSeenItem);
+        ui->tableWidget->setItem(mnRow, 5, pubkeyItem);
     }
 
     ui->countLabel->setText(QString::number(ui->tableWidget->rowCount()));
@@ -268,7 +271,7 @@ void MasternodeManager::on_removeButton_clicked()
         return;
 
     QMessageBox::StandardButton confirm;
-    confirm = QMessageBox::question(this, "Delete SkyNode?", "Are you sure you want to delete this SkyNode configuration?", QMessageBox::Yes|QMessageBox::No);
+    confirm = QMessageBox::question(this, "Delete SkyNode?", "Are you sure you want to delete this skynode node configuration?", QMessageBox::Yes|QMessageBox::No);
 
     if(confirm == QMessageBox::Yes)
     {

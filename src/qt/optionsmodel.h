@@ -3,6 +3,8 @@
 
 #include <QAbstractListModel>
 
+extern bool fUseBlackTheme;
+
 /** Interface from Qt to configuration data structure for Bitcoin client.
    To Qt, the options are presented as a list with the different options
    laid out vertically.
@@ -24,16 +26,15 @@ public:
         ProxyUse,          // bool
         ProxyIP,           // QString
         ProxyPort,         // int
-        ProxySocksVersion, // int
         Fee,               // qint64
         ReserveBalance,    // qint64
         DisplayUnit,       // BitcoinUnits::Unit
-        DisplayAddresses,  // bool
-        DetachDatabases,   // bool
         Language,          // QString
         CoinControlFeatures, // bool
-DarksendRounds, // int
- anonymizeGenesysCoinAmount, //int
+        MinimizeCoinAge,   // bool
+        UseBlackTheme,     // bool
+        DarksendRounds,    // int
+        AnonymizeGenesysCoinAmount, //int
         OptionIDRowCount,
     };
 
@@ -49,13 +50,11 @@ DarksendRounds, // int
     bool getMinimizeToTray();
     bool getMinimizeOnClose();
     int getDisplayUnit();
-    bool getDisplayAddresses();
     bool getCoinControlFeatures();
     QString getLanguage() { return language; }
 
 private:
     int nDisplayUnit;
-    bool bDisplayAddresses;
     bool fMinimizeToTray;
     bool fMinimizeOnClose;
     bool fCoinControlFeatures;
@@ -66,8 +65,8 @@ signals:
     void transactionFeeChanged(qint64);
     void reserveBalanceChanged(qint64);
     void coinControlFeaturesChanged(bool);
-void darksendRoundsChanged(int);
- void anonymizeGenesysCoinAmountChanged(int);
+    void darksendRoundsChanged(int);
+    void AnonymizeGenesysCoinAmountChanged(int);
 };
 
 #endif // OPTIONSMODEL_H

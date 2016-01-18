@@ -1,5 +1,5 @@
-# GenesysCoin Standard New Wallet update v1.3.8
-The In Wallet Web based Games | The Multipalyer Gaming Cryptocurrency
+# Genesys Core New Wallet update v1.4.0.0 Beta
+The Gaming Cryptocurrency
 
 GENESYS | SKYNODES (Masternodes) Ready
 

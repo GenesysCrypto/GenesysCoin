@@ -1,4 +1,4 @@
-// Copyright (c) 2012 The Bitcoin Developers
+// Copyright (c) 2012 The Bitcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #include <string>
@@ -36,7 +36,7 @@ const std::string CLIENT_NAME("Genesys-Core");
 // git will put "#define GIT_ARCHIVE 1" on the next line inside archives. 
 #define GIT_ARCHIVE 1
 #ifdef GIT_ARCHIVE
-#    define GIT_COMMIT_ID ": Experimental"
+#    define GIT_COMMIT_ID ": beta"
 //#    define GIT_COMMIT_ID ": Build1-1115"
 //#    define GIT_COMMIT_DATE "$Format:%cD"
 #endif

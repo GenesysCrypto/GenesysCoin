@@ -48,12 +48,7 @@ void AddEditSkyNode::on_okButton_clicked()
 	c.sAddress = ui->addressLineEdit->text().toStdString();
         CKey secret;
         secret.MakeNewKey(false);
-
-	CBitcoinSecret s;
-	bool fCompressedOut;
-	s.SetSecret(secret.GetSecret(fCompressedOut), false);
-
-        c.sMasternodePrivKey = s.ToString();
+        c.sMasternodePrivKey = CBitcoinSecret(secret).ToString();
 	
         CWalletDB walletdb(pwalletMain->strWalletFile);
         CAccount account;
@@ -105,3 +100,4 @@ void AddEditSkyNode::on_cancelButton_clicked()
 {
     reject();
 }
+

@@ -52,6 +52,9 @@
            <property name="selectionBehavior">
             <enum>QAbstractItemView::SelectRows</enum>
            </property>
+           <property name="sortingEnabled">
+            <bool>true</bool>
+           </property>
            <attribute name="horizontalHeaderStretchLastSection">
             <bool>true</bool>
            </attribute>
@@ -95,7 +98,7 @@
            <item>
             <widget class="QLabel" name="label_2">
              <property name="text">
-              <string>Skynode Count:</string>
+              <string>SkyNode Count:</string>
              </property>
             </widget>
            </item>
@@ -125,7 +128,7 @@
        </widget>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
-         <string>My Skynodes</string>
+         <string>My SkyNodes</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="0" column="0">

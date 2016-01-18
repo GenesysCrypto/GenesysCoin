@@ -1,4 +1,3 @@
-
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Darkcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
@@ -11,17 +10,11 @@
 #include "sync.h"
 #include "net.h"
 #include "key.h"
-//#include "primitives/transaction.h"
-//#include "primitives/block.h"
 #include "util.h"
-//#include "script/script.h"
 #include "base58.h"
 #include "main.h"
 #include "timedata.h"
 #include "script.h"
-
-class CMasterNode;
-class CMasternodePayments;
 class uint256;
 
 #define MASTERNODE_NOT_PROCESSED               0 // initial state
@@ -37,75 +30,132 @@ class uint256;
 #define MASTERNODE_MIN_CONFIRMATIONS           15
 #define MASTERNODE_MIN_DSEEP_SECONDS           (30*60)
 #define MASTERNODE_MIN_DSEE_SECONDS            (5*60)
-#define MASTERNODE_PING_SECONDS                (1*60)
-#define MASTERNODE_EXPIRATION_SECONDS          (14465*60) // Old 65*60
-#define MASTERNODE_REMOVAL_SECONDS             (14470*60) // Old 70*60
+#define MASTERNODE_PING_SECONDS                (1*60) //(1*60)
+#define MASTERNODE_EXPIRATION_SECONDS          (65*60)
+#define MASTERNODE_REMOVAL_SECONDS             (70*60)
 
 using namespace std;
 
+class CMasternode;
+class CMasternodePayments;
 class CMasternodePaymentWinner;
 
 extern CCriticalSection cs_masternodes;
-extern std::vector<CMasterNode> vecMasternodes;
 extern CMasternodePayments masternodePayments;
-extern std::vector<CTxIn> vecMasternodeAskedFor;
 extern map<uint256, CMasternodePaymentWinner> mapSeenMasternodeVotes;
 extern map<int64_t, uint256> mapCacheBlockHashes;
 
+enum masternodeState {
+    MASTERNODE_ENABLED = 1,
+    MASTERNODE_EXPIRED = 2,
+    MASTERNODE_VIN_SPENT = 3,
+    MASTERNODE_REMOVE = 4
+};
 
 // manage the masternode connections
 void ProcessMasternodeConnections();
-int CountMasternodesAboveProtocol(int protocolVersion);
 
-
-void ProcessMessageMasternode(CNode* pfrom, std::string& strCommand, CDataStream& vRecv);
+void ProcessMessageMasternodePayments(CNode* pfrom, std::string& strCommand, CDataStream& vRecv);
 
 //
-// The Masternode Class. For managing the darksend process. It contains the input of the 2000GSY, signature to prove
+// The Masternode Class. For managing the darksend process. It contains the input of the 1000GSY, signature to prove
 // it's the one who own that ip address and code for calculating the payment election.
 //
-class CMasterNode
+class CMasternode
 {
+private:
+    // critical section to protect the inner data structures
+    mutable CCriticalSection cs;
+
 public:
 	static int minProtoVersion;
+    CTxIn vin;  
     CService addr;
-    CTxIn vin;
-    int64_t lastTimeSeen;
     CPubKey pubkey;
     CPubKey pubkey2;
     std::vector<unsigned char> sig;
-    int64_t now; //dsee message times
+    int activeState;
+    int64_t sigTime; //dsee message times
     int64_t lastDseep;
+    int64_t lastTimeSeen;
     int cacheInputAge;
     int cacheInputAgeBlock;
-    int enabled;
     bool unitTest;
     bool allowFreeTx;
     int protocolVersion;
+    int64_t nLastDsq; //the dsq count from the last dsq broadcast of this node
 
-    //the dsq count from the last dsq broadcast of this node
-    int64_t nLastDsq;
+    CMasternode();
+    CMasternode(const CMasternode& other);
+    CMasternode(CService newAddr, CTxIn newVin, CPubKey newPubkey, std::vector<unsigned char> newSig, int64_t newSigTime, CPubKey newPubkey2, int protocolVersionIn);
 
-    CMasterNode(CService newAddr, CTxIn newVin, CPubKey newPubkey, std::vector<unsigned char> newSig, int64_t newNow, CPubKey newPubkey2, int protocolVersionIn)
+
+    void swap(CMasternode& first, CMasternode& second) // nothrow
     {
-        addr = newAddr;
-        vin = newVin;
-        pubkey = newPubkey;
-        pubkey2 = newPubkey2;
-        sig = newSig;
-        now = newNow;
-        enabled = 1;
-        lastTimeSeen = 0;
-        unitTest = false;
-        cacheInputAge = 0;
-        cacheInputAgeBlock = 0;
-        nLastDsq = 0;
-        lastDseep = 0;
-        allowFreeTx = true;
-        protocolVersion = protocolVersionIn;
+        // enable ADL (not necessary in our case, but good practice)
+        using std::swap;
+
+        // by swapping the members of two classes,
+        // the two classes are effectively swapped
+        swap(first.vin, second.vin);
+        swap(first.addr, second.addr);
+        swap(first.pubkey, second.pubkey);
+        swap(first.pubkey2, second.pubkey2);
+        swap(first.sig, second.sig);
+        swap(first.activeState, second.activeState);
+        swap(first.sigTime, second.sigTime);
+        swap(first.lastDseep, second.lastDseep);
+        swap(first.lastTimeSeen, second.lastTimeSeen);
+        swap(first.cacheInputAge, second.cacheInputAge);
+        swap(first.cacheInputAgeBlock, second.cacheInputAgeBlock);
+        swap(first.allowFreeTx, second.allowFreeTx);
+        swap(first.protocolVersion, second.protocolVersion);
+        swap(first.unitTest, second.unitTest);
+        swap(first.nLastDsq, second.nLastDsq);
+    }
+
+    CMasternode& operator=(CMasternode from)
+    {
+        swap(*this, from);
+        return *this;
+    }
+    friend bool operator==(const CMasternode& a, const CMasternode& b)
+    {
+        return a.vin == b.vin;
+    }
+    friend bool operator!=(const CMasternode& a, const CMasternode& b)
+    {
+        return !(a.vin == b.vin);
     }
 
     uint256 CalculateScore(int mod=1, int64_t nBlockHeight=0);
+
+    IMPLEMENT_SERIALIZE
+    (
+        // serialized format:
+        // * version byte (currently 0)
+        // * all fields (?)
+        {
+                LOCK(cs);
+                unsigned char nVersion = 0;
+                READWRITE(nVersion);
+                READWRITE(vin);
+                READWRITE(addr);
+                READWRITE(pubkey);
+                READWRITE(pubkey2);
+                READWRITE(sig);
+                READWRITE(activeState);
+                READWRITE(sigTime);
+                READWRITE(lastDseep);
+                READWRITE(lastTimeSeen);
+                READWRITE(cacheInputAge);
+                READWRITE(cacheInputAgeBlock);
+                READWRITE(unitTest);
+                READWRITE(allowFreeTx);
+                READWRITE(protocolVersion);
+                READWRITE(nLastDsq);
+        }
+    )
 
     void UpdateLastSeen(int64_t override=0)
     {
@@ -139,7 +189,7 @@ public:
 
     bool IsEnabled()
     {
-        return enabled == 1;
+        return activeState == MASTERNODE_ENABLED;
     }
 
     int GetMasternodeInputAge()
@@ -154,15 +204,6 @@ public:
         return cacheInputAge+(pindexBest->nHeight-cacheInputAgeBlock);
     }
 };
-
-
-// Get the current winner for this block
-int GetCurrentMasterNode(int mod=1, int64_t nBlockHeight=0, int minProtocol=CMasterNode::minProtoVersion);
-
-int GetMasternodeByVin(CTxIn& vin);
-int GetMasternodeRank(CTxIn& vin, int64_t nBlockHeight=0, int minProtocol=CMasterNode::minProtoVersion);
-int GetMasternodeByRank(int findRank, int64_t nBlockHeight=0, int minProtocol=CMasterNode::minProtoVersion);
-
 
 // for storing the winning payments
 class CMasternodePaymentWinner
@@ -240,7 +281,7 @@ public:
     void Relay(CMasternodePaymentWinner& winner);
     void Sync(CNode* node);
     void CleanPaymentList();
-    int LastPayment(CMasterNode& mn);
+    int LastPayment(CMasternode& mn);
 
     //slow
     bool GetBlockPayee(int nBlockHeight, CScript& payee);

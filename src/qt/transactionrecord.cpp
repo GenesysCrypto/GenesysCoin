@@ -1,7 +1,8 @@
 #include "transactionrecord.h"
 
-#include "wallet.h"
 #include "base58.h"
+#include "timedata.h"
+#include "wallet.h"
 
 /* Return positive answer if transaction should be shown in list.
  */
@@ -67,9 +68,16 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
 
                     if (hashPrev == hash)
                         continue; // last coinstake output
-
+                    int64_t nValueOut = 0;
+                    BOOST_FOREACH(const CTxOut& txout, wtx.vout)
+                    {
+                        if (IsMine(*wallet,txout.scriptPubKey))
+                            nValueOut += txout.nValue;
+                        if (!MoneyRange(txout.nValue) || !MoneyRange(nValueOut))
+                            throw std::runtime_error("CTransaction::GetValueOut() : value out of range");
+                    }
                     sub.type = TransactionRecord::Generated;
-                    sub.credit = nNet > 0 ? nNet : wtx.GetValueOut() - nDebit;
+                    sub.credit = nNet > 0 ? nNet : nValueOut - nDebit;
                     hashPrev = hash;
                 }
 
@@ -155,6 +163,7 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const CWallet *
 
 void TransactionRecord::updateStatus(const CWalletTx &wtx)
 {
+    AssertLockHeld(cs_main);
     // Determine transaction status
 
     // Find the block the tx is in
@@ -173,12 +182,12 @@ void TransactionRecord::updateStatus(const CWalletTx &wtx)
     status.depth = wtx.GetDepthInMainChain();
     status.cur_num_blocks = nBestHeight;
 
-    if (!wtx.IsFinal())
+    if (!IsFinalTx(wtx, nBestHeight + 1))
     {
         if (wtx.nLockTime < LOCKTIME_THRESHOLD)
         {
             status.status = TransactionStatus::OpenUntilBlock;
-            status.open_for = nBestHeight - wtx.nLockTime;
+            status.open_for = wtx.nLockTime - nBestHeight;
         }
         else
         {
@@ -239,11 +248,17 @@ void TransactionRecord::updateStatus(const CWalletTx &wtx)
 
 bool TransactionRecord::statusUpdateNeeded()
 {
+    AssertLockHeld(cs_main);
     return status.cur_num_blocks != nBestHeight;
 }
 
-std::string TransactionRecord::getTxID()
+QString TransactionRecord::getTxID() const
 {
-    return hash.ToString() + strprintf("-%03d", idx);
+    return formatSubTxId(hash, idx);
+}
+
+QString TransactionRecord::formatSubTxId(const uint256 &hash, int vout)
+{
+    return QString::fromStdString(hash.ToString() + strprintf("-%03d", vout));
 }
 

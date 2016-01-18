@@ -1,6 +1,5 @@
 #include "sendcoinsdialog.h"
 #include "ui_sendcoinsdialog.h"
-
 #include "init.h"
 #include "walletmodel.h"
 #include "addresstablemodel.h"
@@ -50,6 +49,8 @@ SendCoinsDialog::SendCoinsDialog(QWidget *parent) :
     connect(ui->pushButtonCoinControl, SIGNAL(clicked()), this, SLOT(coinControlButtonClicked()));
     connect(ui->checkBoxCoinControlChange, SIGNAL(stateChanged(int)), this, SLOT(coinControlChangeChecked(int)));
     connect(ui->lineEditCoinControlChange, SIGNAL(textEdited(const QString &)), this, SLOT(coinControlChangeEdited(const QString &)));
+    connect(ui->checkUseDarksend, SIGNAL(stateChanged ( int )), this, SLOT(updateDisplayUnit()));
+    connect(ui->checkInstantX, SIGNAL(stateChanged ( int )), this, SLOT(updateInstantX()));
 
     // Coin Control: clipboard actions
     QAction *clipboardQuantityAction = new QAction(tr("Copy quantity"), this);
@@ -83,7 +84,6 @@ SendCoinsDialog::SendCoinsDialog(QWidget *parent) :
 void SendCoinsDialog::setModel(WalletModel *model)
 {
     this->model = model;
-
     for(int i = 0; i < ui->entries->count(); ++i)
     {
         SendCoinsEntry *entry = qobject_cast<SendCoinsEntry*>(ui->entries->itemAt(i)->widget());
@@ -206,7 +206,7 @@ void SendCoinsDialog::on_sendButton_clicked()
         break;
     case WalletModel::TransactionCreationFailed:
         QMessageBox::warning(this, tr("Send Coins"),
-            tr("Error: Transaction creation failed."),
+            tr("Error: Transaction creation failed!"),
             QMessageBox::Ok, QMessageBox::Ok);
         break;
     case WalletModel::TransactionCommitFailed:
@@ -351,9 +351,9 @@ void SendCoinsDialog::setBalance(qint64 balance, qint64 stake, qint64 unconfirme
     Q_UNUSED(stake);
     Q_UNUSED(unconfirmedBalance);
     Q_UNUSED(immatureBalance);
+
     if(!model || !model->getOptionsModel())
         return;
-
     int unit = model->getOptionsModel()->getDisplayUnit();
     ui->labelBalance->setText(BitcoinUnits::formatWithUnit(unit, balance));
 }
@@ -365,6 +365,14 @@ void SendCoinsDialog::updateDisplayUnit()
         // Update labelBalance with the current balance and the current unit
         ui->labelBalance->setText(BitcoinUnits::formatWithUnit(model->getOptionsModel()->getDisplayUnit(), model->getBalance()));
     }
+    CoinControlDialog::coinControl->useDarkSend = ui->checkUseDarksend->isChecked();
+    coinControlUpdateLabels();
+}
+
+void SendCoinsDialog::updateInstantX()
+{
+    CoinControlDialog::coinControl->useInstantX = ui->checkInstantX->isChecked();
+    coinControlUpdateLabels();
 }
 
 // Coin Control: copy label "Quantity" to clipboard
@@ -456,7 +464,7 @@ void SendCoinsDialog::coinControlChangeEdited(const QString & text)
         CoinControlDialog::coinControl->destChange = CBitcoinAddress(text.toStdString()).Get();
 
         // label for the change address
-        ui->labelCoinControlChangeLabel->setStyleSheet("QLabel{color:Test;}");
+        ui->labelCoinControlChangeLabel->setStyleSheet("QLabel{color:black;}");
         if (text.isEmpty())
             ui->labelCoinControlChangeLabel->setText("");
         else if (!CBitcoinAddress(text.toStdString()).IsValid())

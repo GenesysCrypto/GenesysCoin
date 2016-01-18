@@ -1,4 +1,4 @@
-// Copyright (c) 2015 The GSY developers
+// Copyright (c) 2015-2016 The GenesysCoin developers
 // Copyright (c) 2009-2012 The Darkcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -26,10 +26,10 @@ using namespace boost;
 
 
 // #define SPORK_1_MASTERNODE_PAYMENTS_ENFORCEMENT_DEFAULT       1447203599  //2015-11-11 00:59:59 GMT
-#define SPORK_1_MASTERNODE_PAYMENTS_ENFORCEMENT_DEFAULT       2428537599  //
-#define SPORK_2_MAX_VALUE_DEFAULT                             20000        //20000 GSY
+#define SPORK_1_MASTERNODE_PAYMENTS_ENFORCEMENT_DEFAULT       2428537599  //2015-4-8 23:59:59 GMT
+#define SPORK_2_MAX_VALUE_DEFAULT                             2000        //2000 GSY
 #define SPORK_3_REPLAY_BLOCKS_DEFAULT                         0
-#define SPORK_4_RECONVERGE_DEFAULT                            1420070400  //
+#define SPORK_4_RECONVERGE_DEFAULT                            1420070400  //2047-1-1
 
 class CSporkMessage;
 class CSporkManager;

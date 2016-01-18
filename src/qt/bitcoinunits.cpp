@@ -45,7 +45,7 @@ QString BitcoinUnits::description(int unit)
 {
     switch(unit)
     {
-    case BTC: return QString("GenesysCoin");
+    case BTC: return QString("GenesysCoins");
     case mBTC: return QString("Milli-GenesysCoins (1 / 1,000)");
     case uBTC: return QString("Micro-GenesysCoins (1 / 1,000,000)");
     default: return QString("???");
