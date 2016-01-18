@@ -51,6 +51,10 @@ Implementation details
 
 Build steps
 -----------
+1- If you dont have autoreconf Please Install it: sudo apt-get install dh-autoreconf
+
+2- If you encounter "Permission Denied" for autogen.sh, Please Run this Command:
+/secp256k1 chmod +x autogen.sh
 
 libsecp256k1 is built using autotools:
 
@@ -58,4 +62,3 @@ libsecp256k1 is built using autotools:
     $ ./configure
     $ make
     $ ./tests
-    $ sudo make install  # optional
