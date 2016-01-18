@@ -10,7 +10,7 @@ USE_WALLET:=1
 USE_IPV6:=1
 
 DEPSDIR?=/c/deps
-BOOST_SUFFIX?=-mgw48-mt-s-1_57
+BOOST_SUFFIX?=-mgw49-mt-s-1_57
 
 INCLUDEPATHS= \
  -I"$(CURDIR)" \
