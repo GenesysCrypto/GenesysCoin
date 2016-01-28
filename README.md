@@ -7,7 +7,7 @@ The Gaming Cryptocurrency
 
 GSY 1.4.2.0 (Switch)                  -January 2016
 
-#Genesys Core
+*Genesys Core
 
 -All Current Core Updates from v1.4.0.0 beta
 -Updated version to 1.4.2: switch
@@ -30,7 +30,7 @@ Changelog:
 
 GSY 1.4.0.0 (Beta)                  -January 2016
 
-#Genesys Core
+*Genesys Core
 
 -Total switch to the latest Bitcoin Core with New Features and Improvements
 -From New Release v1.4.0.0, GenesysCoin will now require secp256k1
