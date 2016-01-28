@@ -12,7 +12,6 @@
 #include "net.h"
 #include "script.h"
 #include "scrypt.h"
-//#include "hashblock.h" //del
 
 #include <list>
 
@@ -26,6 +25,7 @@ static const int64_t DARKSEND_FEE = (0.0052*COIN);
 static const int64_t DARKSEND_POOL_MAX = (199999.99*COIN);
 
 static const int64_t TARGET_SPACING = 1 * 60; //~1min -DO NOT TOUCH
+static const signed int PROTO_V2_SWITCH_BLOCK = 267000;
 /*
     At 15 signatures, 1/2 of the masternode network can be owned by
     one party without comprimising the security of InstantX

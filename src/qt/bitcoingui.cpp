@@ -232,7 +232,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     statusBar()->setObjectName("statusBar");
     statusBar()->setStyleSheet("#statusBar { color: #cccccc; background-color: qradialgradient(cx: -0.8, cy: 0, fx: -0.8, fy: 0, radius: 0.6, stop: 0 #272727, stop: 1 #272727);  }");
 
-    syncIconMovie = new QMovie(fUseBlackTheme ? ":/movies/update_spinner_black" : ":/movies/spinner", "gif", this);
+    syncIconMovie = new QMovie(fUseBlackTheme ? ":/movies/update_spinner_black" : ":/movies/update_spinner", "mng", this);
 
     // Clicking on a transaction on the overview page simply sends you to transaction history page
     connect(overviewPage, SIGNAL(transactionClicked(QModelIndex)), this, SLOT(gotoHistoryPage()));

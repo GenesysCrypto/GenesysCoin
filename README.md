@@ -1,10 +1,66 @@
-# Genesys Core New Wallet update v1.4.0.0 Beta
+# Genesys Core New Wallet update v1.4.2: Switch
 The Gaming Cryptocurrency
 
-GENESYS | SKYNODES (Masternodes) Ready
 
 
 ---------------------------------- CHANGE LOG ---------------------------------------
+
+GSY 1.4.2.0 (Switch)                  -January 2016
+
+#Genesys Core
+
+-All Current Core Updates from v1.4.0.0 beta
+-Updated version to 1.4.2: switch
+-ProtocolV2 Switch Block is on ~Block 267000
+-Fixed Connection Issue between between v1.4xx wallets
+
+
+//Genesys Standard Wallet
+
+-All Current Core Updates from v1.4.2 switch
+-Fixed "spinner" update to "standard .mng"
+
+//Genesys Gaming Wallet
+
+-All Current Core Upddates from v1.4.2 switch
+
+------------------------
+
+Changelog:
+
+GSY 1.4.0.0 (Beta)                  -January 2016
+
+#Genesys Core
+
+-Total switch to the latest Bitcoin Core with New Features and Improvements
+-From New Release v1.4.0.0, GenesysCoin will now require secp256k1
+-Changed Permanent Block Rewards from 0.175 to 0.149 (Halving will occur at [Block 422000])
+-Masternodes list sync changed to 10
+-New Core Protocol 82081
+-Masternode code Improved with Darsend-relay and masternoman
+-Stealth Address feature added
+-Fixed Tx Broadcasting issue
+-Fixed Balance Update issue in "Send" coins tab
+-Fixed Staking= 0 Issue (Staking can now be disabled in the genesys.conf)
+-Improved Staking Protocol
+-Added Network Traffic in RPC Console
+-Removed Zerocoin Protocol
+-Many Fixes and Code Improvements ...
+
+//Genesys Standard Wallet
+
+-All Current Core v1.4.0.0 Updates
+-New Genesys Standard Wallet Redesign with New Look
+-Added In-Wallet Block Explorer
+
+//Genesys Gaming Wallet
+
+-All Current Core v1.4.0.0 Updates
+-Fixed Darksend Progress Bar Display
+-Changed the "About GenesysCoin" Logo
+-Official font changed from (Terminator) to a more Readable Font (Norwester)
+
+------------------------------------------------------------------------
 
 GSY 1.3.8 (Experimental)			-November 2015
 

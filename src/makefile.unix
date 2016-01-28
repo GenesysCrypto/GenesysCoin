@@ -27,9 +27,9 @@ ifdef STATIC
 	endif
 endif
 
-LIBS += \
- -Wl,-B$(LMODE) \
-   -l secp256k1
+#LIBS += \
+ #-Wl,-B$(LMODE) \
+   #-l secp256k1
 
 # for boost 1.37, add -mt to the boost libraries
 LIBS += \

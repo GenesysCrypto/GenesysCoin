@@ -56,7 +56,7 @@
     </qresource>
 	
     <qresource prefix="/movies">
-        <file alias="spinner">res/movies/spinner.gif</file>
+        <file alias="update_spinner">res/movies/update_spinner.mng</file>
     </qresource>
 	
     <qresource prefix="/translations">
