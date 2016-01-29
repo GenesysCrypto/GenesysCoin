@@ -372,7 +372,7 @@ static bool CheckStakeKernelHashV2(CBlockIndex* pindexPrev, unsigned int nBits, 
     // Calculate hash
     CDataStream ss(SER_GETHASH, 0);
 
-    if(pindexBest->nHeight >= PROTO_V2_SWITCH_BLOCK+1){
+    if(pindexBest->nHeight >= PROTO_V2_SWITCH_BLOCK+1000){
         ss << bnStakeModifierV2;
         ss << txPrev.nTime << prevout.hash << prevout.n << nTimeTx;
         hashProofOfStake = Hash(ss.begin(), ss.end());
@@ -419,6 +419,8 @@ bool CheckStakeKernelHash(CBlockIndex* pindexPrev, unsigned int nBits, const CBl
 		return CheckStakeKernelHashV1(nBits, blockFrom, nTxPrevOffset, txPrev, prevout, nTimeTx, hashProofOfStake, targetProofOfStake, fPrintProofOfStake);
         
     else
+		
+	//if(pindexBest->nHeight >= PROTO_V2_SWITCH_BLOCK+1)
         return CheckStakeKernelHashV2(pindexPrev, nBits, blockFrom.GetBlockTime(), txPrev, prevout, nTimeTx, hashProofOfStake, targetProofOfStake, fPrintProofOfStake);
 }
 
@@ -462,7 +464,9 @@ bool CheckCoinStakeTimestamp(int nHeight, int64_t nTimeBlock, int64_t nTimeTx)
 {
         if(pindexBest->nHeight <= PROTO_V2_SWITCH_BLOCK){
 			return (nTimeBlock == nTimeTx);
-		}else{
+		}
+		else{
+		//if(pindexBest->nHeight >= PROTO_V2_SWITCH_BLOCK+1){
 			return (nTimeBlock == nTimeTx) && ((nTimeTx & STAKE_TIMESTAMP_MASK) == 0);	
 		}	
 }

@@ -114,8 +114,8 @@ public:
         vSeeds.push_back(CDNSSeedData("seednode3", "23.227.190.194"));
 		vSeeds.push_back(CDNSSeedData("seednode4", "104.156.233.0"));
         vSeeds.push_back(CDNSSeedData("seednode5", "45.63.18.148")); // 
-        vSeeds.push_back(CDNSSeedData("seednode6", "104.167.112.55"));
-		vSeeds.push_back(CDNSSeedData("seednode7", "74.208.227.191"));
+        //vSeeds.push_back(CDNSSeedData("seednode6", "104.167.112.55"));
+		//vSeeds.push_back(CDNSSeedData("seednode7", "74.208.227.191"));
         vSeeds.push_back(CDNSSeedData("seednode8", "162.244.28.33")); // 
         vSeeds.push_back(CDNSSeedData("seednode9", "162.244.28.194"));
 		vSeeds.push_back(CDNSSeedData("seednode10", "162.244.28.218"));

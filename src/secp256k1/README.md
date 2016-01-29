@@ -63,4 +63,6 @@ libsecp256k1 is built using autotools:
     $ make
     $ ./tests
 	
-	And Optionally: $ sudo make install	(#Optional Unless you are Building a Qt Wallet)
+	And Optionally: $ sudo make install (#Optional Unless you are Building a Qt Wallet)
+	
+	

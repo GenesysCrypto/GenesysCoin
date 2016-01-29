@@ -1,9 +1,29 @@
-# Genesys Core New Wallet update v1.4.2: Switch
+# Genesys Core New Wallet update v1.4.2.1: Switch2
 The Gaming Cryptocurrency
 
 
 
 ---------------------------------- CHANGE LOG ---------------------------------------
+
+GSY 1.4.2.1 (Switch2)                  -January 2016
+
+*Genesys Core
+
+-All Current Core Updates from v1.4.0.0 beta and 1.4.2 switch
+-Quick update to version 1.4.2.1 (Switch2)
+-ProtocolV2 Switch Block now on ~Block 263000
+-Core "Min Peer Proto" version Bumped to 82081 to stop connections from Old Wallets.
+
+
+//Genesys Standard Wallet
+
+-All Current Core Updates from v1.4.2.1 switch2
+
+//Genesys Gaming Wallet
+
+-All Current Core Upddates from v1.4.2.1 switch2
+
+--------------------------------------------------
 
 GSY 1.4.2.0 (Switch)                  -January 2016
 
