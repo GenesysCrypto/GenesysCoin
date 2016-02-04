@@ -21,7 +21,7 @@ class CValidationState;
 #define START_MASTERNODE_PAYMENTS 1444910400                   // Start on Thu, 15 Oct 2015 @ 12PM	GMT
 
 static const int64_t DARKSEND_COLLATERAL = (2000*COIN);			// 2000GSY
-static const int64_t DARKSEND_FEE = (0.0052*COIN);
+static const int64_t DARKSEND_FEE = (0.002*COIN);
 static const int64_t DARKSEND_POOL_MAX = (199999.99*COIN);
 
 static const int64_t TARGET_SPACING = 1 * 60; //~1min -DO NOT TOUCH
@@ -44,7 +44,7 @@ static const signed int PROTO_V2_SWITCH_BLOCK = 263000;
 #define MASTERNODE_SYNC_IN_PROCESS             8
 #define MASTERNODE_REMOTELY_ENABLED            9
 
-#define MASTERNODE_MIN_CONFIRMATIONS           15
+#define MASTERNODE_MIN_CONFIRMATIONS           5
 #define MASTERNODE_MIN_DSEEP_SECONDS           (30*60)
 #define MASTERNODE_MIN_DSEE_SECONDS            (5*60)
 #define MASTERNODE_PING_SECONDS                (1*60) //(1*60)
@@ -85,7 +85,7 @@ static const int64_t MIN_TX_FEE = 1000;
 static const int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
 /** No amount larger than this (in satoshi) is valid */
 static const int64_t MAX_MONEY = 22000000 * COIN; //
-static const int64_t STATIC_POS_REWARD = 0.149 * COIN; //Default reward of 0.149 GSY / COIN after [block ~352000]
+static const int64_t STATIC_POS_REWARD = 0.149 * COIN; //Default reward of 0.149 GSY / COIN after [block ~422000]
 
 inline bool MoneyRange(int64_t nValue) { return (nValue >= 0 && nValue <= MAX_MONEY); }
 /** Threshold for nLockTime: below this value it is interpreted as block number, otherwise as UNIX timestamp. */

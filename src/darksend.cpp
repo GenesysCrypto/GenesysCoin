@@ -1606,12 +1606,12 @@ bool CDarksendPool::DoAutomaticDenominating(bool fDryRun, bool ready)
     int64_t nValueIn = 0;
 
     // should not be less than fees in DARKSEND_COLLATERAL + few (lets say 5) smallest denoms
-    int64_t nLowestDenom = DARKSEND_COLLATERAL + darkSendDenominations[darkSendDenominations.size() - 1]*5;
+	int64_t nLowestDenom = DARKSEND_FEE + darkSendDenominations[darkSendDenominations.size() - 1]*5;
 
     // if there are no DS collateral inputs yet
     if(!pwalletMain->HasCollateralInputs())
         // should have some additional amount for them
-        nLowestDenom += DARKSEND_COLLATERAL*4;
+		nLowestDenom += (DARKSEND_COLLATERAL*4)+DARKSEND_FEE*2;
 
     int64_t nBalanceNeedsAnonymized = nAnonymizeGenesysCoinAmount*COIN - pwalletMain->GetAnonymizedBalance();
 
@@ -1967,10 +1967,13 @@ bool CDarksendPool::MakeCollateralAmounts()
     std::string strFail = "";
     vector< pair<CScript, int64_t> > vecSend;
 
-    vecSend.push_back(make_pair(scriptChange, DARKSEND_COLLATERAL*4));
+	/*vecSend.push_back(make_pair(scriptChange, (DARKSEND_COLLATERAL*4)+DARKSEND_FEE));*/ //MN-One-Line-Code
+	vecSend.push_back(make_pair(scriptChange, (DARKSEND_COLLATERAL*2)+DARKSEND_FEE));
+    vecSend.push_back(make_pair(scriptChange, (DARKSEND_COLLATERAL*2)+DARKSEND_FEE));
 
     CCoinControl *coinControl=NULL;
     int32_t nChangePos;
+	
     // try to use non-denominated and not mn-like funds
     bool success = pwalletMain->CreateTransaction(vecSend, wtx, reservekey,
             nFeeRet, nChangePos, strFail, coinControl, ONLY_NONDENOMINATED_NOTMN);
@@ -2013,8 +2016,12 @@ bool CDarksendPool::CreateDenominated(int64_t nTotalValue)
 
     // ****** Add collateral outputs ************ /
     if(!pwalletMain->HasCollateralInputs()) {
-        vecSend.push_back(make_pair(scriptChange, DARKSEND_COLLATERAL*4));
-        nValueLeft -= DARKSEND_COLLATERAL*4;
+		/*vecSend.push_back(make_pair(scriptChange, (DARKSEND_COLLATERAL*4)+DARKSEND_FEE));
+        nValueLeft -= (DARKSEND_COLLATERAL*4)+DARKSEND_FEE;*/ //MN-One-Line-Code
+		vecSend.push_back(make_pair(scriptChange, (DARKSEND_COLLATERAL*2)+DARKSEND_FEE));
+        nValueLeft -= (DARKSEND_COLLATERAL*2)+DARKSEND_FEE;
+        vecSend.push_back(make_pair(scriptChange, (DARKSEND_COLLATERAL*2)+DARKSEND_FEE));
+        nValueLeft -= (DARKSEND_COLLATERAL*2)+DARKSEND_FEE;
     }
 
     // ****** Add denoms ************ /
@@ -2286,7 +2293,6 @@ bool CDarkSendSigner::IsVinAssociatedWithPubkey(CTxIn& vin, CPubKey& pubkey){
     //if(GetTransaction(vin.prevout.hash, txVin, hash, true)){
     if(GetTransaction(vin.prevout.hash, txVin, hash)){
         BOOST_FOREACH(CTxOut out, txVin.vout){
-            /*if(out.nValue == GetMNCollateral(pindexBest->nHeight)*COIN){*/ //GetMN
 			if(out.nValue == 2000*COIN){                     // 2000GSY
                 if(out.scriptPubKey == payee2) return true;
             }
@@ -2307,8 +2313,8 @@ bool CDarkSendSigner::SetKey(std::string strSecret, std::string& errorMessage, C
 
     key = vchSecret.GetKey();
     pubkey = key.GetPubKey();
-
-    return true;
+	
+	return true;
 }
 
 bool CDarkSendSigner::SignMessage(std::string strMessage, std::string& errorMessage, vector<unsigned char>& vchSig, CKey key)
@@ -2570,7 +2576,7 @@ void ThreadCheckDarkSendPool()
     {
         c++;
 
-        MilliSleep(2500);
+        MilliSleep(5000);
         //LogPrintf("ThreadCheckDarkSendPool::check timeout\n");
 
         if(c % 10 == 0) darkSendPool.Check();

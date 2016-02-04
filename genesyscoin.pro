@@ -1,13 +1,14 @@
+# GenesysCoin (The Gaming Currency) - Standard Wallet
 TEMPLATE = app
 TARGET = GenesysCoin-qt
-VERSION = 1.4.2.1
+VERSION = 1.4.4.0
 INCLUDEPATH += src src/json src/qt src/qt/plugins
 DEFINES += ENABLE_WALLET
-DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
+DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
 CONFIG += no_include_pwd
 CONFIG += thread
 CONFIG += static
-QT += core gui network widgets printsupport
+QT += network widgets printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets

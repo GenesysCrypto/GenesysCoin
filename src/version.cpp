@@ -36,7 +36,7 @@ const std::string CLIENT_NAME("Genesys-Core");
 // git will put "#define GIT_ARCHIVE 1" on the next line inside archives. 
 #define GIT_ARCHIVE 1
 #ifdef GIT_ARCHIVE
-#    define GIT_COMMIT_ID ": switch2"
+#    define GIT_COMMIT_ID ": Build2-0216"
 //#    define GIT_COMMIT_ID ": Build1-0116"
 //#    define GIT_COMMIT_DATE "$Format:%cD"
 #endif

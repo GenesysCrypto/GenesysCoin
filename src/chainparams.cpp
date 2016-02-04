@@ -99,8 +99,8 @@ public:
         
         base58Prefixes[PUBKEY_ADDRESS] = list_of(38); // GSY Publickey Address Start with "G"
         base58Prefixes[SCRIPT_ADDRESS] = list_of(39);
-        base58Prefixes[SECRET_KEY] =     list_of(220); 
-		// base58Prefixes[STEALTH_ADDRESS] = list_of(137); // reserved - GSY Secret Key Start with "x"
+        base58Prefixes[SECRET_KEY] =     list_of(155); 
+		// base58Prefixes[STEALTH_ADDRESS] = list_of(137); // reserved -GSY Stealth Address Start with "x"
         base58Prefixes[EXT_PUBLIC_KEY] = list_of(0x04)(0x88)(0xB2)(0x1E);
         base58Prefixes[EXT_SECRET_KEY] = list_of(0x04)(0x88)(0xAD)(0xE4);
 
@@ -169,7 +169,7 @@ public:
 
         base58Prefixes[PUBKEY_ADDRESS] = list_of(98);
         base58Prefixes[SCRIPT_ADDRESS] = list_of(99);
-        base58Prefixes[SECRET_KEY]     = list_of(220);
+        base58Prefixes[SECRET_KEY]     = list_of(239);
 		// base58Prefixes[STEALTH_ADDRESS] = list_of(142); // reserved
         base58Prefixes[EXT_PUBLIC_KEY] = list_of(0x04)(0x35)(0x87)(0xCF);
         base58Prefixes[EXT_SECRET_KEY] = list_of(0x04)(0x35)(0x83)(0x94);

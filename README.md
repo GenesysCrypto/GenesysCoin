@@ -5,6 +5,29 @@ The Gaming Cryptocurrency
 
 ---------------------------------- CHANGE LOG ---------------------------------------
 
+GSY 1.4.4 (Build2-0216)                  -February 2016
+
+*Genesys Core
+
+-All Current Core Updates from v1.4.2.1 Switch2
+-Changed update version to 1.4.4.0 (Build2-0216)
+-Little rectifications in Skynode (Masternode Code)
+-Core "Min Peer Proto" version Bumped to 82082 to limit 
+connection from Older Wallets.
+-Some Old Checkpoints removed and a New Checkpoint added from the 
+swtich to v1.4xx
+-Skynode (New Masternode Code) beta fixed for testing
+-Other Minor fixes in the code.
+
+//Genesys Standard Wallet
+
+-All Current Core Updates from v1.4.4 Build2-0216
+
+//Genesys Gaming Wallet
+
+-All Current Core Upddates from v1.4.4 Build2-0216
+--------------------------------------------------
+
 GSY 1.4.2.1 (Switch2)                  -January 2016
 
 *Genesys Core
