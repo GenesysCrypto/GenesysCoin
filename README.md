@@ -1,5 +1,5 @@
-# Genesys Core New Wallet update v1.4.2.1: Switch2
-The Gaming Cryptocurrency
+# Genesys Core New Wallet update v1.4.4: Build2-0216
+The Crypto Gaming Cryptocurrency
 
 
 
