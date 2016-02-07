@@ -99,7 +99,7 @@ public:
         
         base58Prefixes[PUBKEY_ADDRESS] = list_of(38); // GSY Publickey Address Start with "G"
         base58Prefixes[SCRIPT_ADDRESS] = list_of(92); //92 - "e"
-        base58Prefixes[SECRET_KEY] =     list_of(153); 
+        base58Prefixes[SECRET_KEY] =     list_of(155); 
 		// base58Prefixes[STEALTH_ADDRESS] = list_of(137); // reserved -GSY Stealth Address Start with "x"
         base58Prefixes[EXT_PUBLIC_KEY] = list_of(0x04)(0x88)(0xB2)(0x1E);
         base58Prefixes[EXT_SECRET_KEY] = list_of(0x04)(0x88)(0xAD)(0xE4);
@@ -167,7 +167,7 @@ public:
         vFixedSeeds.clear();
         vSeeds.clear();
 
-        base58Prefixes[PUBKEY_ADDRESS] = list_of(97); //"g"
+        base58Prefixes[PUBKEY_ADDRESS] = list_of(98); //"g"
         base58Prefixes[SCRIPT_ADDRESS] = list_of(196); //196
         base58Prefixes[SECRET_KEY]     = list_of(239); //239
 		// base58Prefixes[STEALTH_ADDRESS] = list_of(142); // reserved
