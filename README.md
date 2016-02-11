@@ -1,4 +1,4 @@
-# Genesys Core New Wallet update v1.4.4: Build3-0216
+# Genesys Core New Wallet update v1.4.4.2: Switch3
 The Crypto Gaming Cryptocurrency
 
 
