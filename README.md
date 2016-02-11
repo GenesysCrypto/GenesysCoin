@@ -5,6 +5,32 @@ The Crypto Gaming Cryptocurrency
 
 ---------------------------------- CHANGE LOG ---------------------------------------
 
+GSY v1.4.4.2 (Switch3)                  -February 2016
+
+*Genesys Core
+
+-All Current Core Updates from v1.4.4 Build04-0216
+-Bumped update version to 1.4.4.2 (Switch3)
+-Default Block Time will be Switched to 2 minutes after Block 290000
+-Extended Skynode Expiration Time to up to 30 days (No need to always 
+restart your MN every Hour)
+-Bumped Protocol version to 82085
+-Bumped MIN_POOL_PEER_PROTO_VERSION to 82085
+-Bumped all other Proto versions to 82084
+-Fixed unnecessary memory usage to Default
+-New Checkpoint Hardcoded
+-Cleaned some unused code
+
+//Genesys Standard Wallet
+
+-All Current Core Updates from v1.4.4.2 (Switch3)
+
+//Genesys Gaming Wallet
+
+-All Current Core Upddates from v1.4.4.2 (Switch3)
+
+-----------------------------------------------------------
+ 
 GSY 1.4.4 (Build04-0216)                  -February 2016
 
 *Genesys Core

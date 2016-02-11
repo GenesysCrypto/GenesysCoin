@@ -129,7 +129,11 @@ bool ComputeNextStakeModifier(const CBlockIndex* pindexPrev, uint64_t& nStakeMod
     // Sort candidate blocks by timestamp
     vector<pair<int64_t, uint256> > vSortedByTimestamp;
     
-    vSortedByTimestamp.reserve(64 * nModifierInterval / TARGET_SPACING);
+	if(pindexBest->nHeight <= nTARGET_SPACING_2_SWITCH_BLOCK){
+		vSortedByTimestamp.reserve(64 * nModifierInterval / TARGET_SPACING);
+	}	else {
+		vSortedByTimestamp.reserve(64 * nModifierInterval / nTARGET_SPACING_2);
+	}	
     
     int64_t nSelectionInterval = GetStakeModifierSelectionInterval();
     int64_t nSelectionIntervalStart = (pindexPrev->GetBlockTime() / nModifierInterval) * nModifierInterval - nSelectionInterval;
@@ -420,7 +424,6 @@ bool CheckStakeKernelHash(CBlockIndex* pindexPrev, unsigned int nBits, const CBl
         
     else
 		
-	//if(pindexBest->nHeight >= PROTO_V2_SWITCH_BLOCK+1)
         return CheckStakeKernelHashV2(pindexPrev, nBits, blockFrom.GetBlockTime(), txPrev, prevout, nTimeTx, hashProofOfStake, targetProofOfStake, fPrintProofOfStake);
 }
 

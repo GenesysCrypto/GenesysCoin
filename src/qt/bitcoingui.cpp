@@ -1116,9 +1116,12 @@ void BitcoinGUI::updateStakingIcon()
         uint64_t nWeight = this->nWeight;
         uint64_t nNetworkWeight = GetPoSKernelPS();
         unsigned nEstimateTime = 0;
-		
+		if(pindexBest->nHeight <= nTARGET_SPACING_2_SWITCH_BLOCK){
             nEstimateTime = TARGET_SPACING * nNetworkWeight / nWeight;
-
+		} else {
+            nEstimateTime = nTARGET_SPACING_2 * nNetworkWeight / nWeight;
+        }
+			
         QString text;
         if (nEstimateTime < 60)
         {

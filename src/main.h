@@ -24,8 +24,13 @@ static const int64_t DARKSEND_COLLATERAL = (2000*COIN);			// 2000GSY
 static const int64_t DARKSEND_FEE = (0.002*COIN);
 static const int64_t DARKSEND_POOL_MAX = (199999.99*COIN);
 
-static const int64_t TARGET_SPACING = 1 * 60; //~1min -DO NOT TOUCH
+//static const signed int DEFAULT_STAKE_MODIFIER_BLOCK =
+static const int64_t TARGET_SPACING = 1 * 60; //nTARGET_SPACING_SWITCH
+/* ProtocolV2 */
 static const signed int PROTO_V2_SWITCH_BLOCK = 263000;
+/* nTARGET_SPACING_2 */
+static const int& nTARGET_SPACING_2 = 120;
+static const int& nTARGET_SPACING_2_SWITCH_BLOCK = 290000;
 /*
     At 15 signatures, 1/2 of the masternode network can be owned by
     one party without comprimising the security of InstantX
@@ -49,8 +54,8 @@ static const signed int PROTO_V2_SWITCH_BLOCK = 263000;
 #define MASTERNODE_MIN_DSEE_SECONDS            (5*60)
 #define MASTERNODE_PING_SECONDS                (1*60) //(1*60)
 #define MASTERNODE_PING_WAIT_SECONDS           (5*60)
-#define MASTERNODE_EXPIRATION_SECONDS          (65*60)
-#define MASTERNODE_REMOVAL_SECONDS             (70*60)
+#define MASTERNODE_EXPIRATION_SECONDS          (43265*60) //Old 65*60
+#define MASTERNODE_REMOVAL_SECONDS             (43270*60) //Old 70*60
 
 
 class CBlock;
@@ -92,7 +97,7 @@ inline bool MoneyRange(int64_t nValue) { return (nValue >= 0 && nValue <= MAX_MO
 /** Threshold for nLockTime: below this value it is interpreted as block number, otherwise as UNIX timestamp. */
 static const unsigned int LOCKTIME_THRESHOLD = 500000000; // Tue Nov  5 00:53:20 1985 UTC
 
-static const int64_t DRIFT = 10 * 60;
+static const int64_t DRIFT = 10 * 60; //TIME_DRIFT
 inline int64_t PastDrift(int64_t nTime)   { return nTime - DRIFT; } // up to 10 minutes from the past
 inline int64_t FutureDrift(int64_t nTime) { return nTime + DRIFT; } // up to 10 minutes from the future
 
