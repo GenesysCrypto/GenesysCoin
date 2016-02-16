@@ -583,11 +583,18 @@ void CMasternodeMan::ProcessMessage(CNode* pfrom, std::string& strCommand, CData
 		CTxOut vout = CTxOut(1999.99*COIN, darkSendPool.collateralPubKey); // 2000GSY
         tx.vin.push_back(vin);
         tx.vout.push_back(vout);
-		//if(AcceptableInputs(mempool, state, tx)){
+		/*//if(AcceptableInputs(mempool, state, tx)){
         bool* pfMissingInputs = new bool;
         *pfMissingInputs = false;
-        if(AcceptableInputs(mempool, tx, false, pfMissingInputs)){
-            if(fDebug) LogPrintf("dsee - Accepted masternode entry %i %i\n", count, current);
+        if(AcceptableInputs(mempool, tx, false, pfMissingInputs)){ */
+		bool fAcceptable = false;
+        {
+            TRY_LOCK(cs_main, lockMain);
+            if(!lockMain) return;
+            fAcceptable = AcceptableInputs(mempool, tx, false, NULL);
+        }
+        if(fAcceptable){
+            LogPrint("masternode", "dsee - Accepted masternode entry %i %i\n", count, current);
 
             if(GetInputAge(vin) < MASTERNODE_MIN_CONFIRMATIONS){
                 LogPrintf("dsee - Input must have least %d confirmations\n", MASTERNODE_MIN_CONFIRMATIONS);

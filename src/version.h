@@ -30,18 +30,18 @@ static const int DATABASE_VERSION = 80500;
 // network protocol versioning
 //
 
-static const int PROTOCOL_VERSION = 82085;
+static const int PROTOCOL_VERSION = 82086;
 
 // intial proto version, to be increased after version/verack negotiation
 static const int INIT_PROTO_VERSION = 209;
 
 // disconnect from peers older than this proto version
-static const int MIN_PEER_PROTO_VERSION = 82084;
+static const int MIN_PEER_PROTO_VERSION = 82085;
 
 // minimum peer version accepted by DarkSendPool
 static const int MIN_POOL_PEER_PROTO_VERSION = 82085;
 
-static const int MIN_INSTANTX_PROTO_VERSION = 82084;   
+static const int MIN_INSTANTX_PROTO_VERSION = 82085;   
 //static const int MIN_MN_PROTO_VERSION = 80081;
 
 // nTime field added to CAddress, starting with this version;

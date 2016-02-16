@@ -234,10 +234,10 @@ void CMasternode::Check()
         tx.vin.push_back(vin);
         tx.vout.push_back(vout);
 
-        //if(!AcceptableInputs(mempool, state, tx)){
+        /*//if(!AcceptableInputs(mempool, state, tx)){
         bool* pfMissingInputs = new bool;
-        *pfMissingInputs = false;
-	if(!AcceptableInputs(mempool, tx, false, pfMissingInputs)){
+        *pfMissingInputs = false; */
+	if(!AcceptableInputs(mempool, tx, false, NULL)){
             activeState = MASTERNODE_VIN_SPENT;
             return;
         }

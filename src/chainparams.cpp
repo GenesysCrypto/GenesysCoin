@@ -24,22 +24,19 @@ struct SeedSpec6 {
 // Main network
 //
 
-// Convert the pnSeeds array into usable address objects.
-static void convertSeeds(std::vector<CAddress> &vSeedsOut, const unsigned int *data, unsigned int count, int port)
+// Convert the pnSeeds6 array into usable address objects.
+static void convertSeed6(std::vector<CAddress> &vSeedsOut, const SeedSpec6 *data, unsigned int count)
 {
     // It'll only connect to one or two seed nodes because once it connects,
     // it'll get a pile of addresses with newer timestamps.
     // Seed nodes are given a random 'last seen time' of between one and two
     // weeks ago.
     const int64_t nOneWeek = 7*24*60*60;
-    //for (unsigned int i = 0; i < count; i++) del
-	for (unsigned int i = 0; i < ARRAYLEN(pnSeed); i++)
+    for (unsigned int i = 0; i < count; i++)
     {
         struct in6_addr ip;
-        //memcpy(&ip, data[i].addr, sizeof(ip)); del
-		memcpy(&ip, &pnSeed[i], sizeof(ip));
-        // CAddress addr(CService(ip, data[i].port)); del
-		CAddress addr(CService(ip, port));
+        memcpy(&ip, data[i].addr, sizeof(ip));
+        CAddress addr(CService(ip, data[i].port));
         addr.nTime = GetTime() - GetRand(nOneWeek) - nOneWeek;
         vSeedsOut.push_back(addr);
     }
@@ -107,7 +104,8 @@ public:
        
         nLastPOWBlock = 6220;
 		
-		convertSeeds(vFixedSeeds, pnSeed, ARRAYLEN(pnSeed), nDefaultPort);
+		//convertSeeds(vFixedSeeds, pnSeed, ARRAYLEN(pnSeed), nDefaultPort);
+		convertSeed6(vFixedSeeds, pnSeed6_main, ARRAYLEN(pnSeed6_main));
 		// Genesys Seed nodes
 		vSeeds.push_back(CDNSSeedData("seednode1", "104.255.33.176"));
         vSeeds.push_back(CDNSSeedData("seednode2", "185.81.166.68")); // 
@@ -174,7 +172,8 @@ public:
         base58Prefixes[EXT_PUBLIC_KEY] = list_of(0x04)(0x35)(0x87)(0xCF);
         base58Prefixes[EXT_SECRET_KEY] = list_of(0x04)(0x35)(0x83)(0x94);
 
-        convertSeeds(vFixedSeeds, pnTestnetSeed, ARRAYLEN(pnTestnetSeed), nDefaultPort);
+        //convertSeeds(vFixedSeeds, pnTestnetSeed, ARRAYLEN(pnTestnetSeed), nDefaultPort);
+		convertSeed6(vFixedSeeds, pnSeed6_test, ARRAYLEN(pnSeed6_test));
 
         nLastPOWBlock = 0x7fffffff;
     }

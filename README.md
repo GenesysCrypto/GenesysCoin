@@ -1,9 +1,31 @@
-# Genesys Core New Wallet update v1.4.4.2: Switch3
-The Crypto Gaming Cryptocurrency
+# Genesys Core New Wallet update v1.4.4.4
+The Crypto Gaming Currency
 
 
 
 ---------------------------------- CHANGE LOG ---------------------------------------
+
+GSY v1.4.4.4 (No-Skynode)
+
+*Genesys Core
+
+-All Current Core Updates from v1.4.4.2 (Switch3)
+-Bumped update version to 1.4.4.4 (No-Skynode)
+-Bumped Protocol version to 82086
+-Bumped all other Proto versions to 82085
+-Disabled Skynode (Masternode Code) until next Wallet release v1.5.0.0
+-Hanging Issue now fixed which was was due to Skynode when enabled
+-Other Minor Fixes
+
+//Genesys Standard Wallet
+
+-All Current Core Updates from v1.4.4.4 (No-skynode)
+
+//Genesys Gaming Wallet
+
+-All Current Core Upddates from v1.4.4.4 (No-Skynode)
+
+-----------------------------------------------------------------------
 
 GSY v1.4.4.2 (Switch3)                  -February 2016
 

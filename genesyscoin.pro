@@ -1,10 +1,10 @@
 # GenesysCoin (The Crypto Gaming Currency) - Standard Wallet
 TEMPLATE = app
 TARGET = GenesysCoin-qt
-VERSION = 1.4.4.2
+VERSION = 1.4.4.4
 INCLUDEPATH += src src/json src/qt src/qt/plugins
 DEFINES += ENABLE_WALLET
-DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
+DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
 CONFIG += no_include_pwd
 CONFIG += thread
 CONFIG += static
@@ -170,7 +170,11 @@ contains(USE_O3, 1) {
     QMAKE_CFLAGS += -msse2
 }
 
-QMAKE_CXXFLAGS_WARN_ON = -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector -Wunused-function -Wunused-variable -fpermissive -Wconversion-null -Wmaybe-uninitialized
+QMAKE_CXXFLAGS_WARN_ON = -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector
+QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-variable -fpermissive
+
+!macx:QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-local-typedefs
+macx:QMAKE_CXXFLAGS_WARN_ON += -Wno-deprecated-declarations
 
 # Input
 DEPENDPATH += src src/json src/qt
