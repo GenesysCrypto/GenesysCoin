@@ -1,9 +1,31 @@
-# Genesys Core New Wallet update v1.4.4.4
+# Genesys Core New Wallet update v1.5
 The Crypto Gaming Currency
 
 
 
 ---------------------------------- CHANGE LOG ---------------------------------------
+
+GSY v1.5 (Skynode2)                                                     
+
+*Genesys Core
+
+-All Current Core Updates from v1.4.4.4 (No-Skynode)
+-Bumped update version to 1.5 (Skynode2)
+-Bumped Protocol version to 82087
+-Fixed Hanging Issues while Skynode is enabled
+-Skynode (Masternode) is full enabled and working again
+-Optimized the Checkpoints Code for faster Sync
+-Many other Fixes and Corrections have been made in the Code
+
+//Genesys Standard Wallet
+
+-All Current Core Updates from v1.5 (Skynode)
+
+//Genesys Gaming Wallet
+
+-All Current Core Upddates from v1.5 (Skynode)                 
+
+-------------------------------------------------------------------------------
 
 GSY v1.4.4.4 (No-Skynode)
 

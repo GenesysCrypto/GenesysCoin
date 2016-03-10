@@ -16,8 +16,8 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 }
 
 linux {
-    SECP256K1_LIB_PATH = /usr/local/lib
-    SECP256K1_INCLUDE_PATH = /usr/local/include
+    #SECP256K1_LIB_PATH = /usr/local/lib
+    #SECP256K1_INCLUDE_PATH = /usr/local/include
 }
 
 win32 {
@@ -122,7 +122,7 @@ contains(BITCOIN_NEED_QT_PLUGINS, 1) {
 }
 
 # LIBSEC256K1 SUPPORT
-QMAKE_CXXFLAGS *= -DUSE_SECP256K1
+#QMAKE_CXXFLAGS *= -DUSE_SECP256K1
 
 INCLUDEPATH += src/leveldb/include src/leveldb/helpers
 LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
