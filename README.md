@@ -5,25 +5,28 @@ The Crypto Gaming Currency
 
 ---------------------------------- CHANGE LOG ---------------------------------------
 
-GSY v1.5 (Skynode2)                                                     
+Changelog:
+
+GSY v1.5 (Skynode5)                                                             
 
 *Genesys Core
 
 -All Current Core Updates from v1.4.4.4 (No-Skynode)
--Bumped update version to 1.5 (Skynode2)
+-Bumped update version to 1.5 (Skynode5)
 -Bumped Protocol version to 82087
 -Fixed Hanging Issues while Skynode is enabled
+-Fixed Transaction Fee Issue
 -Skynode (Masternode) is full enabled and working again
 -Optimized the Checkpoints Code for faster Sync
 -Many other Fixes and Corrections have been made in the Code
 
 //Genesys Standard Wallet
 
--All Current Core Updates from v1.5 (Skynode)
+-All Current Core Updates from v1.5 (Skynode5)
 
 //Genesys Gaming Wallet
 
--All Current Core Upddates from v1.5 (Skynode)                 
+-All Current Core Upddates from v1.5 (Skynode5)                 
 
 -------------------------------------------------------------------------------
 
