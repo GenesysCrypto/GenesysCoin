@@ -50,7 +50,7 @@ unsigned int nMinerSleep;
 bool fUseFastIndex;
 bool fOnlyTor = false;
 
-//enum Checkpoints::CPMode CheckpointsMode;	//CPMode
+enum Checkpoints::CPMode CheckpointsMode;	//CPMode
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -688,14 +688,14 @@ bool AppInit2(boost::thread_group& threadGroup)
     }
 #endif
 
-    /*if (mapArgs.count("-checkpointkey")) // ppcoin: checkpoint master priv key
+    if (mapArgs.count("-checkpointkey")) // ppcoin: checkpoint master priv key
     {
         if (!Checkpoints::SetCheckpointPrivKey(GetArg("-checkpointkey", "")))
             InitError(_("Unable to sign checkpoint, wrong checkpointkey?\n"));
     }
 
     BOOST_FOREACH(string strDest, mapMultiArgs["-seednode"])
-        AddOneShot(strDest);*/
+        AddOneShot(strDest);
 
     // ********************************************************* Step 7: load blockchain
 

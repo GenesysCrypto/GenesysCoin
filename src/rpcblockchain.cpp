@@ -12,6 +12,7 @@ using namespace json_spirit;
 using namespace std;
 
 extern void TxToJSON(const CTransaction& tx, const uint256 hashBlock, json_spirit::Object& entry);
+extern enum Checkpoints::CPMode CheckpointsMode;	//CPMode
 
 double GetDifficulty(const CBlockIndex* blockindex)
 {
@@ -135,7 +136,7 @@ Object blockToJSON(const CBlock& block, const CBlockIndex* blockindex, bool fPri
     result.push_back(Pair("proofhash", blockindex->hashProof.GetHex()));
     result.push_back(Pair("entropybit", (int)blockindex->GetStakeEntropyBit()));
     result.push_back(Pair("modifier", strprintf("%016x", blockindex->nStakeModifier)));
-    result.push_back(Pair("modifierv2", blockindex->bnStakeModifierV2.GetHex()));
+    result.push_back(Pair("modifierv2", blockindex->bnStakeModifierV2.GetHex())); //StakeModifier2
     Array txinfo;
     BOOST_FOREACH (const CTransaction& tx, block.vtx)
     {
@@ -188,10 +189,10 @@ Value getdifficulty(const Array& params, bool fHelp)
             "getdifficulty\n"
             "Returns the difficulty as a multiple of the minimum difficulty.");
 
-    //Object obj;
-    //obj.push_back(Pair("proof-of-work",        GetDifficulty()));
-    //obj.push_back(Pair("proof-of-stake",       GetDifficulty(GetLastBlockIndex(pindexBest, true))));
-    return GetDifficulty(GetLastBlockIndex(pindexBest, true));
+    Object obj;
+    obj.push_back(Pair("proof-of-work",        GetDifficulty()));
+    obj.push_back(Pair("proof-of-stake",       GetDifficulty(GetLastBlockIndex(pindexBest, true))));
+    return obj;
 }
 
 
@@ -282,13 +283,27 @@ Value getcheckpoint(const Array& params, bool fHelp)
             "Show info of synchronized checkpoint.\n");
 
     Object result;
-    const CBlockIndex* pindexCheckpoint = Checkpoints::AutoSelectSyncCheckpoint();
+    CBlockIndex* pindexCheckpoint;
 
-    result.push_back(Pair("synccheckpoint", pindexCheckpoint->GetBlockHash().ToString().c_str()));
+    result.push_back(Pair("synccheckpoint", Checkpoints::hashSyncCheckpoint.ToString().c_str()));
+    pindexCheckpoint = mapBlockIndex[Checkpoints::hashSyncCheckpoint];
     result.push_back(Pair("height", pindexCheckpoint->nHeight));
     result.push_back(Pair("timestamp", DateTimeStrFormat(pindexCheckpoint->GetBlockTime()).c_str()));
 
-    result.push_back(Pair("policy", "rolling"));
+    result.push_back(Pair("policy", "permissive"));
+
+    // Check that the block satisfies synchronized checkpoint //added
+    if (CheckpointsMode == Checkpoints::STRICT)
+        result.push_back(Pair("policy", "strict"));
+
+    if (CheckpointsMode == Checkpoints::ADVISORY)
+        result.push_back(Pair("policy", "advisory"));
+
+    if (CheckpointsMode == Checkpoints::PERMISSIVE)
+        result.push_back(Pair("policy", "permissive"));
+
+    if (mapArgs.count("-checkpointkey"))
+        result.push_back(Pair("checkpointmaster", true));
 
     return result;
 }

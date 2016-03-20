@@ -505,7 +505,6 @@ void CoinControlDialog::updateLabels(WalletModel *model, QDialog* dialog)
 
         // Min Fee
         int64_t nMinFee = GetMinFee(txDummy, 1, GMF_SEND, nBytes);
-		//int64_t nMinFee = GetMinFee(txDummy, 1, AllowFree(dPriority), GMF_SEND, nBytes);
         
         nPayFee = max(nFee, nMinFee);
         

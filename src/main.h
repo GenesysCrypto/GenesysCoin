@@ -12,7 +12,6 @@
 #include "net.h"
 #include "script.h"
 #include "scrypt.h"
-//#include "hashblock.h"
 
 #include <list>
 
@@ -37,8 +36,26 @@ static const int& nTARGET_SPACING_2_SWITCH_BLOCK = 290000;
     one party without comprimising the security of InstantX
     (1000/2150.0)**15 = 1.031e-05
 */
-#define INSTANTX_SIGNATURES_REQUIRED           10
-#define INSTANTX_SIGNATURES_TOTAL              15
+#define INSTANTX_SIGNATURES_REQUIRED           20
+#define INSTANTX_SIGNATURES_TOTAL              30
+
+#define MASTERNODE_NOT_PROCESSED               0 // initial state
+#define MASTERNODE_IS_CAPABLE                  1
+#define MASTERNODE_NOT_CAPABLE                 2
+#define MASTERNODE_STOPPED                     3
+#define MASTERNODE_INPUT_TOO_NEW               4
+#define MASTERNODE_PORT_NOT_OPEN               6
+#define MASTERNODE_PORT_OPEN                   7
+#define MASTERNODE_SYNC_IN_PROCESS             8
+#define MASTERNODE_REMOTELY_ENABLED            9
+
+#define MASTERNODE_MIN_CONFIRMATIONS           5
+#define MASTERNODE_MIN_DSEEP_SECONDS           (30*60)
+#define MASTERNODE_MIN_DSEE_SECONDS            (5*60)
+#define MASTERNODE_PING_SECONDS                (1*60) //(1*60)
+#define MASTERNODE_PING_WAIT_SECONDS           (5*60)
+#define MASTERNODE_EXPIRATION_SECONDS          (43265*60) //Old 65*60
+#define MASTERNODE_REMOVAL_SECONDS             (43270*60) //Old 70*60
 
 
 class CBlock;
@@ -53,8 +70,6 @@ class CWallet;
 static const unsigned int MAX_BLOCK_SIZE = 20000000;
 /** The maximum size for mined blocks */
 static const unsigned int MAX_BLOCK_SIZE_GEN = MAX_BLOCK_SIZE/2;
-/** Default for -blockprioritysize, maximum space for zero/low-fee transactions **/
-//static const unsigned int DEFAULT_BLOCK_PRIORITY_SIZE = 50000;
 /** The maximum size for transactions we're willing to relay/mine **/
 static const unsigned int MAX_STANDARD_TX_SIZE = MAX_BLOCK_SIZE_GEN/5;
 /** The maximum allowed number of signature check operations in a block (network rule) */
@@ -66,7 +81,7 @@ static const unsigned int MAX_TX_SIGOPS = MAX_BLOCK_SIGOPS/5;
 /** The maximum number of orphan transactions kept in memory */
 static const unsigned int MAX_ORPHAN_TRANSACTIONS = MAX_BLOCK_SIZE/100;
 /** Default for -maxorphanblocks, maximum number of orphan blocks kept in memory */
-static const unsigned int DEFAULT_MAX_ORPHAN_BLOCKS = 10000;
+static const unsigned int DEFAULT_MAX_ORPHAN_BLOCKS = 750;
 /** The maximum number of entries in an 'inv' protocol message */
 static const unsigned int MAX_INV_SZ = 50000;
 /** Fees smaller than this (in satoshi) are considered zero fee (for transaction creation) */
@@ -75,6 +90,7 @@ static const int64_t MIN_TX_FEE = 1000; //em...= 2000
 static const int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
 /** No amount larger than this (in satoshi) is valid */
 static const int64_t MAX_MONEY = 22000000 * COIN; //em...=20000000
+/** Constant POS Reward */ //After block ~422000
 static const int64_t STATIC_POS_REWARD = 0.149 * COIN; //Default reward of 0.149 GSY / COIN after [block ~422000]
 
 inline bool MoneyRange(int64_t nValue) { return (nValue >= 0 && nValue <= MAX_MONEY); }
@@ -85,10 +101,6 @@ static const int64_t DRIFT = 10 * 60; //TIME_DRIFT
 inline int64_t PastDrift(int64_t nTime)   { return nTime - DRIFT; } // up to 10 minutes from the past
 inline int64_t FutureDrift(int64_t nTime) { return nTime + DRIFT; } // up to 10 minutes from the future
 
-/** "reject" message codes **/
-static const unsigned char REJECT_INVALID = 0x10;
-
-//inline int64_t GetMNCollateral(int nHeight) { return nHeight>=57000 ? 10000 : 100000; } DELETE
 
 extern CScript COINBASE_FLAGS;
 extern CCriticalSection cs_main;
@@ -123,9 +135,6 @@ extern bool fUseFastIndex;
 extern unsigned int nDerivationMethodIndex;
 
 extern bool fMinimizeCoinAge;
-
-extern bool fLargeWorkForkFound;
-extern bool fLargeWorkInvalidChainFound;
 
 // Minimum disk space required - used in CheckDiskSpace()
 static const uint64_t nMinDiskSpace = 52428800;
@@ -179,17 +188,15 @@ void ThreadStakeMiner(CWallet *pwallet);
 
 /** (try to) add transaction to memory pool **/
 bool AcceptToMemoryPool(CTxMemPool& pool, CTransaction &tx, bool fLimitFree,
-                        bool* pfMissingInputs, bool fRejectInsaneFee=false, bool ignoreFees=false);
+                        bool* pfMissingInputs);
 
 bool AcceptableInputs(CTxMemPool& pool, const CTransaction &txo, bool fLimitFree,
-                        bool* pfMissingInputs, bool fRejectInsaneFee=false, bool isDSTX=false);
+                        bool* pfMissingInputs);
 
 
 bool FindTransactionsByDestination(const CTxDestination &dest, std::vector<uint256> &vtxhash);
 
 int GetInputAge(CTxIn& vin);
-int GetInputAgeIX(uint256 nTXHash, CTxIn& vin);
-int GetIXConfirmations(uint256 nTXHash);
 /** Abort with a message */
 bool AbortNode(const std::string &msg, const std::string &userMessage="");
 /** Increase a node's misbehavior score. */
@@ -256,7 +263,6 @@ enum GetMinFee_mode
 
 typedef std::map<uint256, std::pair<CTxIndex, CTransaction> > MapPrevTx;
 
-//int64_t GetMinFee(const CTransaction& tx, unsigned int nBytes, bool fAllowFree, enum GetMinFee_mode mode);
 int64_t GetMinFee(const CTransaction& tx, unsigned int nBlockSize = 1, enum GetMinFee_mode mode = GMF_BLOCK, unsigned int nBytes = 0);
 
 
@@ -328,9 +334,6 @@ public:
         // ppcoin: the coin stake transaction is marked with the first output empty
         return (vin.size() > 0 && (!vin[0].prevout.IsNull()) && vout.size() >= 2 && vout[0].IsEmpty());
     }
-
-    // Compute priority, given priority of inputs and (optionally) tx size
-    double ComputePriority(double dPriorityInputs, unsigned int nTxSize=0) const;
 
     /** Amount of bitcoins spent by this transaction.
         @return sum of all outputs (note: does not include fees)
@@ -495,13 +498,6 @@ unsigned int GetLegacySigOpCount(const CTransaction& tx);
  */
 unsigned int GetP2SHSigOpCount(const CTransaction& tx, const MapPrevTx& mapInputs);
 
-inline bool AllowFree(double dPriority)
-{
-    // Large (in bytes) low-priority (new, small-coin) transactions
-    // need a fee.
-    return dPriority > COIN * 576 / 250;
-}
-
 /** Check for standard transaction types
     @return True if all outputs (scriptPubKeys) use only standard transaction forms
 */
@@ -552,17 +548,18 @@ public:
         READWRITE(nIndex);
     )
 
+
     int SetMerkleBranch(const CBlock* pblock=NULL);
 
     // Return depth of transaction in blockchain:
     // -1  : not in blockchain, and not in memory pool (conflicted transaction)
     //  0  : in memory pool, waiting to be included in a block
     // >=1 : this many blocks deep in the main chain
-    int GetDepthInMainChain(CBlockIndex* &pindexRet, bool enableIX=true) const;
-    int GetDepthInMainChain(bool enableIX=true) const { CBlockIndex *pindexRet; return GetDepthInMainChain(pindexRet, enableIX); }
+    int GetDepthInMainChain(CBlockIndex* &pindexRet) const;
+    int GetDepthInMainChain() const { CBlockIndex *pindexRet; return GetDepthInMainChain(pindexRet); }
     bool IsInMainChain() const { CBlockIndex *pindexRet; return GetDepthInMainChainINTERNAL(pindexRet) > 0; }
     int GetBlocksToMaturity() const;
-    bool AcceptToMemoryPool(bool fLimitFree=true, bool fRejectInsaneFee=false, bool ignoreFees=false);
+    bool AcceptToMemoryPool(bool fLimitFree=true);
     int GetTransactionLockSignatures() const;
     bool IsTransactionLockTimedOut() const;
 };
@@ -642,7 +639,7 @@ class CBlock
 {
 public:
     // header
-    static const int CURRENT_VERSION = 7;
+    static const int CURRENT_VERSION = 7;	//Works
     int nVersion;
     uint256 hashPrevBlock;
     uint256 hashMerkleRoot;
@@ -717,8 +714,8 @@ public:
         else
             return GetPoWHash();
     }
-
-    uint256 GetPoWHash() const
+	
+	uint256 GetPoWHash() const
     {
         //return scrypt_blockhash(CVOIDBEGIN(nVersion));
 		return Hash(BEGIN(nVersion), END(nNonce));
@@ -935,7 +932,7 @@ public:
     int64_t nMoneySupply;
 
     unsigned int nFlags;  // ppcoin: block index flags
-    enum
+    enum  
     {
         BLOCK_PROOF_OF_STAKE = (1 << 0), // is proof-of-stake block
         BLOCK_STAKE_ENTROPY  = (1 << 1), // entropy bit for stake modifier
@@ -1072,6 +1069,14 @@ public:
         std::sort(pbegin, pend);
         return pbegin[(pend - pbegin)/2];
     }
+
+    /**
+     * Returns true if there are nRequired or more blocks of minVersion or above
+     * in the last nToCheck blocks, starting at pstart and going backwards.
+     */
+    static bool IsSuperMajority(int minVersion, const CBlockIndex* pstart,
+                                unsigned int nRequired, unsigned int nToCheck);
+
 
     bool IsProofOfWork() const
     {
@@ -1429,8 +1434,7 @@ protected:
     virtual void SyncTransaction(const CTransaction &tx, const CBlock *pblock, bool fConnect) =0;
     virtual void EraseFromWallet(const uint256 &hash) =0;
     virtual void SetBestChain(const CBlockLocator &locator) =0;
-    //virtual bool UpdatedTransaction(const uint256 &hash) =0;
-	virtual void UpdatedTransaction(const uint256 &hash) =0;
+    virtual void UpdatedTransaction(const uint256 &hash) =0;
     virtual void Inventory(const uint256 &hash) =0;
     virtual void ResendWalletTransactions(bool fForce) =0;
     friend void ::RegisterWallet(CWalletInterface*);
