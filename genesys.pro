@@ -48,7 +48,7 @@ SECP256K1_LIB_PATH=C:/deps/secp256k1/.libs
 #    BOOST_INCLUDE_PATH, BOOST_LIB_PATH, BDB_INCLUDE_PATH,
 #    BDB_LIB_PATH, OPENSSL_INCLUDE_PATH and OPENSSL_LIB_PATH respectively
 
-# # workaround for boost 1.58
+# workaround for boost 1.58
 # DEFINES += BOOST_VARIANT_USE_RELAXED_GET_BY_DEFAULT
 
 OBJECTS_DIR = build

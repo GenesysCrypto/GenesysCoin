@@ -8,24 +8,24 @@ The Crypto Gaming Currency
 Changelog:
 
 
-GSY v1.5.1 (No-MN)
+GSY v1.5.1 (NS-0316)                                
 
 *Genesys Core
 
 -All Current Core Updates from v1.5
--Bumped update version to 1.5.1 (No-MN)
+-Bumped update version to 1.5.1 (NS-0316)
 -Bumped Protocol version to 82088
 -Bumped all other Proto versions to 82087
 -Disabled Skynode (Masternode Code) until next Wallet release
--Added new checkpoints
+-Added a new checkpoint
 
 //Genesys Standard Wallet
 
--All Current Core Updates from v1.5.1 (No-MN)
+-All Current Core Updates from v1.5.1 (NS-0316)
 
 //Genesys Gaming Wallet
 
--All Current Core Upddates from v1.5.1 (No-MN)
+-All Current Core Upddates from v1.5.1 (NS-0316)
 
 ---------------------------------------------------------------------
 

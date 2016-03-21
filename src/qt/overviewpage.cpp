@@ -359,7 +359,8 @@ void OverviewPage::darkSendStatus()
         strSettings.prepend(QString::number(nDarksendRounds)).prepend(" / ");
         strSettings.prepend(BitcoinUnits::formatWithUnit(
             walletModel->getOptionsModel()->getDisplayUnit(),
-            nAnonymizeGenesysCoinAmount * COIN));
+            nAnonymizeGenesysCoinAmount * COIN)
+        );
 
         ui->labelAmountRounds->setText(strSettings);
     }
